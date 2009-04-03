@@ -1,0 +1,2 @@
+nant.exe test
+pause
