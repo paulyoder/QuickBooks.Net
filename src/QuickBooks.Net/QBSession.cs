@@ -7,6 +7,8 @@ using System.Xml.Linq;
 using log4net;
 using System.Reflection;
 using QuickBooks.Net.Query;
+using QuickBooks.Net.Reports;
+using QuickBooks.Net.Domain;
 
 namespace QuickBooks.Net
 {
@@ -17,17 +19,20 @@ namespace QuickBooks.Net
         protected string _qbXmlVersion;
         protected string _ticket;
 
+        public virtual bool IsOpen { get; protected set; }
         public virtual IQueries Queries { get; protected set; }
+        public virtual IReports Reports { get; protected set; }
 
         internal QBSession(QBSessionFactory sessionFactory, string qbXmlVersion, string ticket)
         {
-            if (_log.IsDebugEnabled) 
-                _log.DebugFormat("New Session -- QbXmlVersion={0}; Ticket={1}", qbXmlVersion, ticket);
+            _log.InfoFormat("Opening Session Ticket {0}", ticket);
 
             _sessionFactory = sessionFactory;
             _qbXmlVersion = qbXmlVersion;
             _ticket = ticket;
+            IsOpen = true;
             Queries = new Queries(this);
+            Reports = new Reports.Reports(this);
         }
 
         public XElement ProcessRequest(XElement QBXmlMsgsRq)
@@ -41,7 +46,7 @@ namespace QuickBooks.Net
             if (_log.IsDebugEnabled) 
                 _log.Debug("QBXmlMsgsRq:\n" + doc.ToString()); 
        
-            return _sessionFactory.ProcessRequest(_ticket, doc.ToString(SaveOptions.DisableFormatting));
+            return _sessionFactory.ProcessRequest(_ticket, "<?xml version=\"1.0\"?>" + doc.ToString(SaveOptions.DisableFormatting));
         }
 
         public void Dispose()
@@ -51,10 +56,9 @@ namespace QuickBooks.Net
 
         public void Close()
         {
-            if (_log.IsDebugEnabled) 
-                _log.DebugFormat("Closing Session Ticket {0}", _ticket);
-
+            _log.InfoFormat("Closing Session Ticket {0}", _ticket);
             _sessionFactory.CloseSession();
+            IsOpen = false;
         }
     }
 }

@@ -8,7 +8,7 @@
     <ProjectGuid>{1EAB35BC-CEBF-4674-AE9C-AB4218F9CA6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QuickBooks.Net.Net</RootNamespace>
+    <RootNamespace>QuickBooks.Net</RootNamespace>
     <AssemblyName>QuickBooks.Net</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,10 +53,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionType.cs" />
+    <Compile Include="Domain\Address.cs" />
+    <Compile Include="Domain\AddressBlock.cs" />
+    <Compile Include="Domain\CCInfo.cs" />
+    <Compile Include="Domain\ReportColumn.cs" />
+    <Compile Include="Domain\ReportColumnDescription.cs" />
     <Compile Include="Domain\CreditCardCharge.cs" />
+    <Compile Include="Domain\Customer.cs" />
+    <Compile Include="Domain\DataExt.cs" />
     <Compile Include="Domain\Deposit.cs" />
     <Compile Include="Domain\DepositLine.cs" />
+    <Compile Include="Domain\Employee.cs" />
+    <Compile Include="Domain\EntityBase.cs" />
     <Compile Include="Domain\ExpenseLine.cs" />
+    <Compile Include="Domain\OtherName.cs" />
+    <Compile Include="Domain\Report.cs" />
+    <Compile Include="Domain\ReportRow.cs" />
+    <Compile Include="Domain\ReportRows.cs" />
+    <Compile Include="Domain\Vendor.cs" />
     <Compile Include="FileMode.cs" />
     <Compile Include="IQBSessionFactory.cs" />
     <Compile Include="QBSessionFactory.cs" />
@@ -65,12 +79,24 @@
     <Compile Include="Query\CommonTransactionQueries.cs" />
     <Compile Include="Query\CommonTransactionQueriesWithRefNumber.cs" />
     <Compile Include="Query\CreditCardChargeQuery.cs" />
+    <Compile Include="Reports\CustomDetailReport.cs" />
+    <Compile Include="Query\CustomerQuery.cs" />
     <Compile Include="Query\DepositQuery.cs" />
+    <Compile Include="Query\EmployeeQuery.cs" />
+    <Compile Include="Query\EntityQuery.cs" />
+    <Compile Include="Query\ICommonQueries.cs" />
     <Compile Include="Query\ICommonTransactionQueries.cs" />
     <Compile Include="Query\ICommonTransactionQueriesWithRefNumber.cs" />
     <Compile Include="Query\ICreditCardChargeQuery.cs" />
+    <Compile Include="Reports\ICustomDetailReport.cs" />
+    <Compile Include="Query\ICustomerQuery.cs" />
+    <Compile Include="Query\IEmployeeQuery.cs" />
+    <Compile Include="Query\IEntityQuery.cs" />
     <Compile Include="Query\IDepositQuery.cs" />
+    <Compile Include="Query\IOtherNameQuery.cs" />
     <Compile Include="Query\IQueries.cs" />
+    <Compile Include="Query\IVendorQuery.cs" />
+    <Compile Include="Query\OtherNameQuery.cs" />
     <Compile Include="Query\Queries.cs" />
     <Compile Include="Query\QueryBase.cs" />
     <Compile Include="Query\IClassQuery.cs" />
@@ -84,7 +110,11 @@
     <Compile Include="IQBSession.cs" />
     <Compile Include="IQBSessionInternal.cs" />
     <Compile Include="QBSession.cs" />
+    <Compile Include="Query\VendorQuery.cs" />
+    <Compile Include="Reports\IReports.cs" />
+    <Compile Include="Reports\Reports.cs" />
     <Compile Include="Utilities\DateTimeExtensions.cs" />
+    <Compile Include="Utilities\QBXMLBase.cs" />
     <Compile Include="Utilities\XElementBase.cs" />
   </ItemGroup>
   <ItemGroup>

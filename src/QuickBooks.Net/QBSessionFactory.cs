@@ -43,12 +43,14 @@ namespace QuickBooks.Net
             _fileName = fileName;
             _qbXmlVersion = qbXmlVersion;
             //Converting enums to QBXMLRP2Lib namespace enums
-            _fileMode = (QBFileMode)Enum.Parse(
-                typeof(QBFileMode), 
-                Enum.GetName(typeof(FileMode), fileMode));
-            _connectionType = (QBXMLRPConnectionType)Enum.Parse(
-                typeof(QBXMLRPConnectionType),
-                Enum.GetName(typeof(ConnectionType), connectionType));
+            _fileMode = QBFileMode.qbFileOpenDoNotCare;
+            _connectionType = QBXMLRPConnectionType.localQBD;
+            //_fileMode = (QBFileMode)Enum.Parse(
+            //    typeof(QBFileMode),
+            //    Enum.GetName(typeof(FileMode), fileMode));
+            //_connectionType = (QBXMLRPConnectionType)Enum.Parse(
+            //    typeof(QBXMLRPConnectionType),
+            //    Enum.GetName(typeof(ConnectionType), connectionType));
 
             _connectionIsOpen = false;
         }

@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,6 +54,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\ReportColumnDescriptionTest.cs" />
+    <Compile Include="Domain\ReportColumnTest.cs" />
+    <Compile Include="Domain\ReportRowsTest.cs" />
+    <Compile Include="Domain\ReportRowTest.cs" />
+    <Compile Include="Domain\ReportTest.cs" />
     <Compile Include="Query\CommonQueriesTest.cs" />
     <Compile Include="Query\CommonTransactionQueriesTest.cs" />
     <Compile Include="Query\CommonTransactionQueriesWithRefNumberTest.cs" />

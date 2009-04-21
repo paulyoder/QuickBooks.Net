@@ -6,8 +6,8 @@ using QuickBooks.Net.Domain;
 
 namespace QuickBooks.Net.Query
 {
-    public interface IClassQuery : 
-        ICommonQueries<IClassQuery>, 
-        IQueryBaseNoIteration<QBClass>
+    public interface IEntityQuery : 
+        ICommonQueries<IEntityQuery>,
+        IQueryBase<EntityBase>
     { }
 }
