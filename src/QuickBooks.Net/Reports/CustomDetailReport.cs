@@ -237,6 +237,7 @@ namespace QuickBooks.Net.Reports
         public Report RunReport()
         {
             var response = _session.ProcessRequest(_xmlBase.Xml).Descendants(_responseName).First();
+            _xmlBase.ResetXml();
             CheckForErrorMessageInResponse(response);
             return new Report(response.Element("ReportRet"));
         }
