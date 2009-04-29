@@ -11,7 +11,7 @@ namespace QuickBooks.Net.Tests.Utilities
     {
         protected XElement ValidSessionResponseForClassQueries()
         {
-            return new XElement("ClassQueryRs",
+            return new XElement("QBXML", new XElement("ClassQueryRs",
                 new XAttribute("statusCode", 0),
                 new XAttribute("statusMessage", "Status OK"),
                 new XAttribute("retCount", 1),
@@ -30,7 +30,7 @@ namespace QuickBooks.Net.Tests.Utilities
                     new XElement("EditSequence", "3"),
                     new XElement("Name", "Sara"),
                     new XElement("FullName", "Sara Yoder"),
-                    new XElement("Sublevel", 4)));
+                    new XElement("Sublevel", 4))));
         }
 
         /// <summary>
@@ -40,15 +40,15 @@ namespace QuickBooks.Net.Tests.Utilities
         protected XElement ValidSessionResponseForIteratedClassQueries()
         {
             var response = ValidSessionResponseForClassQueries();
-            response.Add(new XAttribute("iteratorID", 123));
-            response.Add(new XAttribute("iteratorRemainingCount", 2000));
+            response.Descendants("ClassQueryRs").First().Add(new XAttribute("iteratorID", 123));
+            response.Descendants("ClassQueryRs").First().Add(new XAttribute("iteratorRemainingCount", 2000));
             return response;
 
         }
 
         protected XElement ValidSessionResponseForCreditCardQueries()
         {
-            return new XElement("CreditCardChargeQueryRs",
+            return new XElement("QBXML", new XElement("CreditCardChargeQueryRs",
                 new XAttribute("statusCode", 0),
                 new XAttribute("statusMessage", "Status OK"),
                 new XAttribute("retCount", 1),
@@ -60,12 +60,12 @@ namespace QuickBooks.Net.Tests.Utilities
                     new XElement("TxnNumber", "999"),
                     new XElement("TxnDate", new DateTime(2008, 1, 2).ToXMLDateString()),
                     new XElement("Memo", "hello mom"),
-                    new XElement("DepositTotal", 100)));
+                    new XElement("DepositTotal", 100))));
         }
 
         protected XElement ValidSessionResponseForDepositQueries()
         {
-            return new XElement("DepositQueryRs",
+            return new XElement("QBXML", new XElement("DepositQueryRs",
                 new XAttribute("statusCode", 0),
                 new XAttribute("statusMessage", "Status OK"),
                 new XAttribute("retCount", 1),
@@ -77,7 +77,7 @@ namespace QuickBooks.Net.Tests.Utilities
                     new XElement("TxnNumber", "999"),
                     new XElement("TxnDate", new DateTime(2008, 1, 2).ToXMLDateString()),
                     new XElement("Memo", "hello mom"),
-                    new XElement("DepositTotal", 100)));
+                    new XElement("DepositTotal", 100))));
         }
     }
 }

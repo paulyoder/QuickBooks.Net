@@ -74,8 +74,8 @@ namespace QuickBooks.Net.Tests.Query
         public void List_throws_QBException_when_error_message_in_qb_response()
         {
             var response = ValidSessionResponseForClassQueries();
-            response.Attribute("statusCode").SetValue("500");
-            response.Attribute("statusMessage").SetValue("There was an error in the query");
+            response.Descendants("ClassQueryRs").First().Attribute("statusCode").SetValue("500");
+            response.Descendants("ClassQueryRs").First().Attribute("statusMessage").SetValue("There was an error in the query");
 
             var session = MockRepository.GenerateStub<IQBSessionInternal>();
             session.Expect(x => x.ProcessRequest(null))
@@ -123,7 +123,7 @@ namespace QuickBooks.Net.Tests.Query
         public void Single_returns_null_when_nothing_returns()
         {
             var noReturnedClasses = ValidSessionResponseForClassQueries();
-            noReturnedClasses.RemoveNodes();
+            noReturnedClasses.Descendants("ClassQueryRs").First().RemoveNodes();
 
             var session = MockRepository.GenerateStub<IQBSessionInternal>();
             session.Expect(x => x.ProcessRequest(null))
@@ -140,8 +140,8 @@ namespace QuickBooks.Net.Tests.Query
         public void Single_throws_QBException_when_error_message_in_qb_response()
         {
             var response = ValidSessionResponseForClassQueries();
-            response.Attribute("statusCode").SetValue("500");
-            response.Attribute("statusMessage").SetValue("There was an error in the query");
+            response.Descendants("ClassQueryRs").First().Attribute("statusCode").SetValue("500");
+            response.Descendants("ClassQueryRs").First().Attribute("statusMessage").SetValue("There was an error in the query");
 
             var session = MockRepository.GenerateStub<IQBSessionInternal>();
             session.Expect(x => x.ProcessRequest(null))
@@ -290,7 +290,7 @@ namespace QuickBooks.Net.Tests.Query
                 new XAttribute("iteratorID", 123),
                 new XElement("MaxReturned", 20));
             var response = ValidSessionResponseForIteratedClassQueries();
-            response.Attribute("iteratorRemainingCount").SetValue("0");
+            response.Descendants("ClassQueryRs").First().Attribute("iteratorRemainingCount").SetValue("0");
 
             var session = MockRepository.GenerateStub<IQBSessionInternal>();
             session.Stub(x => x.ProcessRequest(null))
@@ -311,8 +311,8 @@ namespace QuickBooks.Net.Tests.Query
         public void Iterate_throws_QBException_when_error_message_in_qb_response()
         {
             var response = ValidSessionResponseForIteratedClassQueries();
-            response.Attribute("statusCode").SetValue("500");
-            response.Attribute("statusMessage").SetValue("There was an error in the query");
+            response.Descendants("ClassQueryRs").First().Attribute("statusCode").SetValue("500");
+            response.Descendants("ClassQueryRs").First().Attribute("statusMessage").SetValue("There was an error in the query");
 
             var session = MockRepository.GenerateStub<IQBSessionInternal>();
             session.Expect(x => x.ProcessRequest(null))
