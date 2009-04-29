@@ -55,7 +55,7 @@ namespace QuickBooks.Net.Domain
             {
                 var column = _columnDescriptions.Where(x => x.ColumnType == columnType).FirstOrDefault();
                 if (column == null)
-                    throw new ArgumentException(string.Format("{0} ColumnType does not exist", columnType));
+                    throw new ArgumentException(string.Format("'{0}' ColumnType does not exist", columnType));
                 else
                 {
                     var rowColumn = Columns.Where(x => x.Id == column.Id).FirstOrDefault();

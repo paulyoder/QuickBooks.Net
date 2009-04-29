@@ -200,16 +200,44 @@ namespace QuickBooks.Net.Net.Tests.Domain
             Assert.AreEqual(2, new ReportRow(TotalRowXML()).Columns.Count());
         }
 
-        [Test]
-        public void Indexer_ReturnsColumnValue()
+        private IEnumerable<ReportColumnDescription> ColumnDescriptions()
         {
-
+            var col1xml = new XElement("ColDesc",
+                new XAttribute("colID","1"),
+                new XAttribute("dataType","string"),
+                new XElement("ColType","Account"));
+            var col2xml = new XElement("ColDesc",
+                new XAttribute("colID","2"),
+                new XAttribute("dataType","string"),
+                new XElement("ColType","Class"));
+            var col3xml = new XElement("ColDesc",
+                new XAttribute("colID", "3"),
+                new XAttribute("dataType", "string"),
+                new XElement("ColType", "Type"));
+            var descriptions = new List<ReportColumnDescription>();
+            descriptions.Add(new ReportColumnDescription(col1xml));
+            descriptions.Add(new ReportColumnDescription(col2xml));
+            descriptions.Add(new ReportColumnDescription(col3xml));
+            return descriptions;
         }
 
         [Test]
-        public void Indexer_ReturnsBlankWhenColumnNameDoesntExistOnRow()
+        public void Indexer_returns_column_value()
         {
+            Assert.AreEqual("55", new ReportRow(DataRowXML(), ColumnDescriptions())["Account"]);
+        }
 
+        [Test]
+        public void Indexer_returns_blank_when_valid_column_name_doesnt_exist_on_row()
+        {
+            Assert.AreEqual("", new ReportRow(DataRowXML(), ColumnDescriptions())["Type"]);
+        }
+
+        [Test]
+        [ExpectedArgumentException("'WrongColumnName' ColumnType does not exist")]
+        public void Indexer_throws_ArgumentException_on_invalid_column_name()
+        {
+            var temp = new ReportRow(DataRowXML(), ColumnDescriptions())["WrongColumnName"];
         }
     }
 }
