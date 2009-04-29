@@ -31,11 +31,19 @@ namespace QuickBooks.Net.Utilities
             _xmlBase = new XElementBase(requestName);
         }
 
+        /// <summary>
+        /// Adds or updates a qbxml message
+        /// </summary>
+        /// <param name="message">Message to add</param>
         protected virtual void AddUpdateMessage(params string[] message)
         {
             _xmlBase.AddUpdateXElement(ConvertStringArrayToXElement(message.ToList()));
         }
 
+        /// <summary>
+        /// Adds a qbxml message and allows duplicate messages
+        /// </summary>
+        /// <param name="message">Message to add</param>
         protected virtual void AddMessageAllowDuplicates(params string[] message)
         {
             _xmlBase.AddUpdateXElement(ConvertStringArrayToXElement(message.ToList()), true);
@@ -47,7 +55,6 @@ namespace QuickBooks.Net.Utilities
         /// new XElement("DateFilter",
         ///   new XElement("FromDate", "2/8/2008"));
         /// </summary>
-        /// <returns></returns>
         protected virtual XElement ConvertStringArrayToXElement(IList<string> messageList)
         {
             if (messageList.Count == 2)
@@ -56,6 +63,14 @@ namespace QuickBooks.Net.Utilities
                 return new XElement(messageList[0], ConvertStringArrayToXElement(messageList.Skip(1).ToList()));
         }
 
+        /// <summary>
+        /// Throws a QBException if there is an error message in the response
+        /// </summary>
+        /// <param name="response">
+        /// QBXML response. 
+        /// Response root element is return name element (e.g. ClassQueryRs). It is NOT the QBXML element
+        /// </param>
+        /// <exception cref="QBException" />
         protected virtual void CheckForErrorMessageInResponse(XElement response)
         {
             var statusCode = response.Attribute("statusCode").Value;
@@ -64,6 +79,10 @@ namespace QuickBooks.Net.Utilities
                 throw new QBException(statusMessage, statusCode);
         }
 
+        /// <summary>
+        /// Converts an XElement response into a list of the corresponding C# objects
+        /// </summary>
+        /// <param name="response">QBXML response</param>
         protected virtual IList<TReturn> XMLtoPOCOList(XElement response)
         {
             var list = new List<TReturn>();

@@ -17,16 +17,42 @@ namespace QuickBooks.Net.Utilities
             ResetXml();
         }
 
+        /// <summary>
+        /// Adds or updates a child XElement to the <paramref name="Xml"/> property
+        /// If the child XElement already exists, it overwrites the old child XElement
+        /// </summary>
+        /// <param name="newXElement">Child XElement to add or update</param>
         public virtual void AddUpdateXElement(XElement newXElement)
         {
             AddUpdateXElement(newXElement, false);
         }
 
+        /// <summary>
+        /// Adds or updates a child XElement to the <paramref name="Xml"/> property
+        /// </summary>
+        /// <example allowDuplicates="true">
+        /// Xml Before = (ClassFullName)Paul(/ClassFullName)
+        /// AddUpdateXElement(XElement("ClassFullName", "Sara"), true)
+        /// Xml After = (ClassFullName)Paul(/ClassFullName)(ClassFullName)Sara(/ClassFullName)
+        /// </example>
+        /// <example allowDuplicates="false">
+        /// Xml Before = (ClassFullName)Paul(/ClassFullName)
+        /// AddUpdateXElement(XElement("ClassFullName", "Sara"), false)
+        /// Xml After = (ClassFullName)Sara(/ClassFullName)
+        /// </example>
+        /// <param name="newXElement">Child XElement to add or update</param>
+        /// <param name="allowDuplicates">If true, old child XElements are not overwritten</param>
         public virtual void AddUpdateXElement(XElement newXElement, bool allowDuplicates)
         {
             AddUpdateXElement(newXElement, Xml, allowDuplicates);
         }
 
+        /// <summary>
+        /// Adds or updates a child XElement to the parent XElement argument
+        /// </summary>
+        /// <param name="newXElement">Child XElement to add/update</param>
+        /// <param name="parent">XElement to add the newXElement to</param>
+        /// <param name="allowDuplicates">If true, old child XElements are not overwritten</param>
         protected virtual void AddUpdateXElement(XElement newXElement, XElement parent, bool allowDuplicates)
         {
             var firstGeneration = from child in parent.Descendants()
@@ -49,7 +75,10 @@ namespace QuickBooks.Net.Utilities
                     AddUpdateXElement(newXElement.Descendants().First(), match, allowDuplicates);
         }
 
-        public void ResetXml()
+        /// <summary>
+        /// Deletes all child elements from the <paramref name="Xml"/> property
+        /// </summary>
+        public virtual void ResetXml()
         {
             Xml = new XElement(_xmlRootElementName);
         }
