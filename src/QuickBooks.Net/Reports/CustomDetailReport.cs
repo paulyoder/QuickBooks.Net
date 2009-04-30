@@ -28,36 +28,5 @@ namespace QuickBooks.Net.Reports
             AddUpdateMessage("CustomDetailReportType", reportType);
             return this;
         }
-
-        public ICustomDetailReport SummarizeRowsBy(string summarizeBy)
-        {
-            AddUpdateMessage("SummarizeRowsBy", summarizeBy);
-            return this;
-        }
-
-        public ICustomDetailReport IncludeColumn(params string[] columns)
-        {
-            foreach (var column in columns)
-                AddMessageAllowDuplicates("IncludeColumn", column);
-            return this;
-        }
-
-        public ICustomDetailReport IncludeAccounts(string accounts)
-        {
-            AddUpdateMessage("IncludeAccounts", accounts);
-            return this;
-        }
-
-        public ICustomDetailReport ReportOpenBalanceAsOf(string asOf)
-        {
-            AddUpdateMessage("ReportOpenBalanceAsOf", asOf);
-            return this;
-        }
-
-        public ICustomDetailReport ReportBasis(string reportBasis)
-        {
-            AddUpdateMessage("ReportBasis", reportBasis);
-            return this;
-        }
     }
 }

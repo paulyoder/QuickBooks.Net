@@ -9,6 +9,7 @@ using System.Reflection;
 using QuickBooks.Net.Query;
 using QuickBooks.Net.Reports;
 using QuickBooks.Net.Domain;
+using System.Runtime.InteropServices;
 
 namespace QuickBooks.Net
 {
@@ -44,9 +45,25 @@ namespace QuickBooks.Net
                                 QBXmlMsgsRq)));
 
             if (_log.IsDebugEnabled) 
-                _log.Debug("QBXmlMsgsRq:\n" + doc.ToString()); 
-       
-            return _sessionFactory.ProcessRequest(_ticket, "<?xml version=\"1.0\"?>" + doc.ToString(SaveOptions.DisableFormatting));
+                _log.Debug("QBXmlMsgsRq:\n" + doc.ToString());
+
+            XElement response = null;
+            try
+            {
+                response = _sessionFactory.ProcessRequest(_ticket,
+                    "<?xml version=\"1.0\"?>" + doc.ToString(SaveOptions.DisableFormatting));
+            }
+            catch (COMException e)
+            {
+                if (e.Message == "QuickBooks found an error when parsing the provided XML text stream.")
+                {
+                    _log.ErrorFormat("Error parsing QBXML: \n<?xml version=\"1.0\"?>\n{0}", doc.ToString());
+                    throw new QBException(e.Message, "", doc);
+                }
+                else
+                    throw e;
+            }
+            return response;
         }
 
         public void Dispose()

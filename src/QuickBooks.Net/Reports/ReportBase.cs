@@ -201,6 +201,67 @@ namespace QuickBooks.Net.Reports
             return _returnReport;
         }
 
+        public virtual IReturnReport SummarizeColumnsBy(string summarizeBy)
+        {
+            AddUpdateMessage("SummarizeColumnsBy", summarizeBy);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport SummarizeRowsBy(string summarizeBy)
+        {
+            AddUpdateMessage("SummarizeRowsBy", summarizeBy);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport IncludeColumn(params string[] columns)
+        {
+            foreach (var column in columns)
+                AddMessageAllowDuplicates("IncludeColumn", column);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport IncludeSubcolumns()
+        {
+            AddUpdateMessage("IncludeSubcolumns", "True");
+            return _returnReport;
+        }
+
+        public virtual IReturnReport ReportCalendar(string reportCalendar)
+        {
+            AddUpdateMessage("ReportCalendar", reportCalendar);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport ReturnRows(string returnRows)
+        {
+            AddUpdateMessage("ReturnRows", returnRows);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport ReturnColumns(string returnColumns)
+        {
+            AddUpdateMessage("ReturnColumns", returnColumns);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport IncludeAccounts(string accounts)
+        {
+            AddUpdateMessage("IncludeAccounts", accounts);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport OpenBalanceAsOf(string asOf)
+        {
+            AddUpdateMessage("ReportOpenBalanceAsOf", asOf);
+            return _returnReport;
+        }
+
+        public virtual IReturnReport ReportBasis(string reportBasis)
+        {
+            AddUpdateMessage("ReportBasis", reportBasis);
+            return _returnReport;
+        }
+
         public virtual Report RunReport()
         {
             var response = _session.ProcessRequest(_xmlBase.Xml).Descendants(_responseName).First();

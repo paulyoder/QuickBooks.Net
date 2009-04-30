@@ -12,7 +12,7 @@ namespace QuickBooks.Net.Reports
         ICustomDetailReport SummarizeRowsBy(string summarizeBy);
         ICustomDetailReport IncludeColumn(params string[] columns);
         ICustomDetailReport IncludeAccounts(string accounts);
-        ICustomDetailReport ReportOpenBalanceAsOf(string asOf);
+        ICustomDetailReport OpenBalanceAsOf(string asOf);
         ICustomDetailReport ReportBasis(string reportBasis);
     }
 }
