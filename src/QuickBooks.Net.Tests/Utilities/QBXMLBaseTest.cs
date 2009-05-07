@@ -19,19 +19,19 @@ namespace QuickBooks.Net.Net.Tests.Utilities
                 : base(null, "ClassQueryRq", "ClassQueryRs")
             { }
 
-            public new void AddUpdateMessage(params string[] message)
+            public new void AddUpdateMessage(params object[] message)
             {
                 base.AddUpdateMessage(message);
             }
 
-            public new void AddMessageAllowDuplicates(params string[] message)
+            public new void AddMessageAllowDuplicates(params object[] message)
             {
                 base.AddMessageAllowDuplicates(message);
             }
 
-            public new XElement ConvertStringArrayToXElement(IList<string> messageList)
+            public new XElement ConvertObjectArrayToXElement(IList<object> messageList)
             {
-                return base.ConvertStringArrayToXElement(messageList);
+                return base.ConvertObjectArrayToXElement(messageList);
             }
 
             public new void CheckForErrorMessageInResponse(XElement response)
@@ -98,24 +98,59 @@ namespace QuickBooks.Net.Net.Tests.Utilities
         }
 
         [Test]
-        public void ConvertStringArrayToXElement_two_elements()
+        public void ConvertObjectArrayToXElement_two_elements()
         {
             var expected = new XElement("MaxReturned", "20");
             var actual = new QBXMLBaseChild()
-                .ConvertStringArrayToXElement(
-                    new List<string>() { "MaxReturned", "20" });
+                .ConvertObjectArrayToXElement(
+                    new List<object>() { "MaxReturned", "20" });
             AssertXmlAreEqual(expected, actual);
         }
 
         [Test]
-        public void ConvertStringArrayToXElement_four_elements()
+        public void ConvertObjectArrayToXElement_four_elements()
         {
             var expected = new XElement("ClassQueryRq",
                 new XElement("AccountFilter",
                     new XElement("AccountFullName", "Yoder, Paul")));
             var actual = new QBXMLBaseChild()
-                .ConvertStringArrayToXElement(
-                    new List<string>() { "ClassQueryRq", "AccountFilter", "AccountFullName", "Yoder, Paul" });
+                .ConvertObjectArrayToXElement(
+                    new List<object>() { "ClassQueryRq", "AccountFilter", "AccountFullName", "Yoder, Paul" });
+            AssertXmlAreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ConvertObjectArrayToXElement_converts_decimal_to_string()
+        {
+            var expected = new XElement("ClassQueryRq",
+                new XElement("AccountFilter",
+                    new XElement("AccountBalance", "20.22")));
+            var actual = new QBXMLBaseChild()
+                .ConvertObjectArrayToXElement(
+                    new List<object>() { "ClassQueryRq", "AccountFilter", "AccountBalance", (decimal)20.22 });
+            AssertXmlAreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ConvertObjectArrayToXElement_converts_bool_to_string()
+        {
+            var expected = new XElement("ClassQueryRq",
+                new XElement("IsActive", "true"));
+            var actual = new QBXMLBaseChild()
+                .ConvertObjectArrayToXElement(
+                    new List<object>() { "ClassQueryRq", "IsActive", true });
+            AssertXmlAreEqual(expected, actual);
+        }
+
+        [Test]
+        public void ConvertObjectArrayToXElement_converts_DateTime_to_XMLVersionOfDateTime()
+        {
+            var expected = new XElement("ClassQueryRq",
+                new XElement("AccountFilter",
+                    new XElement("AccountOpenDate", "2009-01-01T00:00:00")));
+            var actual = new QBXMLBaseChild()
+                .ConvertObjectArrayToXElement(
+                    new List<object>() { "ClassQueryRq", "AccountFilter", "AccountOpenDate", new DateTime(2009, 1, 1) });
             AssertXmlAreEqual(expected, actual);
         }
 

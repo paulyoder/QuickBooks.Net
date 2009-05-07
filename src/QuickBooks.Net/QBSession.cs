@@ -10,6 +10,7 @@ using QuickBooks.Net.Query;
 using QuickBooks.Net.Reports;
 using QuickBooks.Net.Domain;
 using System.Runtime.InteropServices;
+using QuickBooks.Net.Add;
 
 namespace QuickBooks.Net
 {
@@ -21,8 +22,9 @@ namespace QuickBooks.Net
         protected string _ticket;
 
         public virtual bool IsOpen { get; protected set; }
-        public virtual IQueries Queries { get; protected set; }
-        public virtual IReports Reports { get; protected set; }
+        public virtual IQueries Query { get; protected set; }
+        public virtual IReports Report { get; protected set; }
+        public virtual IAdditions Add { get; protected set; }
 
         internal QBSession(QBSessionFactory sessionFactory, string qbXmlVersion, string ticket)
         {
@@ -32,8 +34,9 @@ namespace QuickBooks.Net
             _qbXmlVersion = qbXmlVersion;
             _ticket = ticket;
             IsOpen = true;
-            Queries = new Queries(this);
-            Reports = new Reports.Reports(this);
+            Query = new Queries(this);
+            Report = new Reports.Reports(this);
+            Add = new Additions(this);
         }
 
         public XElement ProcessRequest(XElement QBXmlMsgsRq)

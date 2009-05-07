@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using QuickBooks.Net.Utilities.DateTimeExtensions;
+using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Tests.Utilities
 {

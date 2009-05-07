@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using QuickBooks.Net.Domain;
 using QuickBooks.Net.Utilities;
-using QuickBooks.Net.Utilities.DateTimeExtensions;
+using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Reports
 {
@@ -26,13 +26,13 @@ namespace QuickBooks.Net.Reports
 
         public virtual IReturnReport ReportPeriodFrom(DateTime dateFrom)
         {
-            AddUpdateMessage("ReportPeriod", "FromReportDate", dateFrom.ToXMLDateString());
+            AddUpdateMessage("ReportPeriod", "FromReportDate", dateFrom);
             return _returnReport;
         }
 
         public virtual IReturnReport ReportPeriodTo(DateTime dateTo)
         {
-            AddUpdateMessage("ReportPeriod", "ToReportDate", dateTo.ToXMLDateString());
+            AddUpdateMessage("ReportPeriod", "ToReportDate", dateTo);
             return _returnReport;
         }
 
@@ -173,13 +173,13 @@ namespace QuickBooks.Net.Reports
 
         public virtual IReturnReport ReportModifiedFrom(DateTime dateFrom)
         {
-            AddUpdateMessage("ReportModifiedDateRangeFilter", "FromReportModifiedDate", dateFrom.ToXMLDateString());
+            AddUpdateMessage("ReportModifiedDateRangeFilter", "FromReportModifiedDate", dateFrom);
             return _returnReport;
         }
 
         public virtual IReturnReport ReportModifiedTo(DateTime dateTo)
         {
-            AddUpdateMessage("ReportModifiedDateRangeFilter", "ToReportModifiedDate", dateTo.ToXMLDateString());
+            AddUpdateMessage("ReportModifiedDateRangeFilter", "ToReportModifiedDate", dateTo);
             return _returnReport;
         }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using QuickBooks.Net.Utilities.DateTimeExtensions;
+using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Query
 {
@@ -50,18 +50,18 @@ namespace QuickBooks.Net.Query
 
         public virtual IReturnQuery DateModifiedFrom(DateTime fromDate)
         {
-            var message = new List<string>();
+            var message = new List<object>();
             message.AddRange(_modifiedDateFromElement);
-            message.Add(fromDate.ToXMLDateString());
+            message.Add(fromDate);
             AddUpdateMessage(message.ToArray());
             return _returnQuery;
         }
 
         public virtual IReturnQuery DateModifiedTo(DateTime toDate)
         {
-            var message = new List<string>();
+            var message = new List<object>();
             message.AddRange(_modifiedDateToElement);
-            message.Add(toDate.ToXMLDateString());
+            message.Add(toDate);
             AddUpdateMessage(message.ToArray());
             return _returnQuery;
         }

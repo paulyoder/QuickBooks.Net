@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using QuickBooks.Net.Utilities.DateTimeExtensions;
+using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Query
 {
@@ -25,13 +25,13 @@ namespace QuickBooks.Net.Query
 
         public virtual IReturnQuery DateFrom(DateTime fromDate)
         {
-            AddUpdateMessage("TxnDateRangeFilter", "FromTxnDate", fromDate.ToXMLDateString());
+            AddUpdateMessage("TxnDateRangeFilter", "FromTxnDate", fromDate);
             return _returnQuery;
         }
 
         public virtual IReturnQuery DateTo(DateTime toDate)
         {
-            AddUpdateMessage("TxnDateRangeFilter", "ToTxnDate", toDate.ToXMLDateString());
+            AddUpdateMessage("TxnDateRangeFilter", "ToTxnDate", toDate);
             return _returnQuery;
         }
 

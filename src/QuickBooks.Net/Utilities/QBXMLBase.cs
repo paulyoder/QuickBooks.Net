@@ -5,11 +5,15 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.IO;
+using QuickBooks.Net.Utilities.ConversionExtensions;
+using log4net;
+using System.Reflection;
 
 namespace QuickBooks.Net.Utilities
 {
     public class QBXMLBase<TReturn>
     {
+        private ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected IQBSessionInternal _session;
         protected string _requestName;
         protected string _responseName;
@@ -35,18 +39,18 @@ namespace QuickBooks.Net.Utilities
         /// Adds or updates a qbxml message
         /// </summary>
         /// <param name="message">Message to add</param>
-        protected virtual void AddUpdateMessage(params string[] message)
+        protected virtual void AddUpdateMessage(params object[] message)
         {
-            _xmlBase.AddUpdateXElement(ConvertStringArrayToXElement(message.ToList()));
+            _xmlBase.AddUpdateXElement(ConvertObjectArrayToXElement(message.ToList()));
         }
 
         /// <summary>
         /// Adds a qbxml message and allows duplicate messages
         /// </summary>
         /// <param name="message">Message to add</param>
-        protected virtual void AddMessageAllowDuplicates(params string[] message)
+        protected virtual void AddMessageAllowDuplicates(params object[] message)
         {
-            _xmlBase.AddUpdateXElement(ConvertStringArrayToXElement(message.ToList()), true);
+            _xmlBase.AddUpdateXElement(ConvertObjectArrayToXElement(message.ToList()), true);
         }
 
         /// <summary>
@@ -55,12 +59,24 @@ namespace QuickBooks.Net.Utilities
         /// new XElement("DateFilter",
         ///   new XElement("FromDate", "2/8/2008"));
         /// </summary>
-        protected virtual XElement ConvertStringArrayToXElement(IList<string> messageList)
+        protected virtual XElement ConvertObjectArrayToXElement(IList<object> messageList)
         {
             if (messageList.Count == 2)
-                return new XElement(messageList[0], messageList[1]);
+            {
+                var elementName = messageList[0].ToString();
+                //Convert DateTime to xml date time version, else just get the ToString value
+                string value = messageList[1].ToString();
+                //DateTime needs to be converted to xml version of DateTime
+                if (messageList[1].GetType() == typeof(DateTime))
+                    value = messageList[1].As<DateTime>().ToXMLDateString();
+                //bool values need to be all lowercase (ToString() returns capitalized word)
+                else if (messageList[1].GetType() == typeof(bool))
+                    value = (messageList[1].As<bool>()) ?
+                        "true" : "false";
+                return new XElement(elementName, value);
+            }
             else
-                return new XElement(messageList[0], ConvertStringArrayToXElement(messageList.Skip(1).ToList()));
+                return new XElement(messageList[0].ToString(), ConvertObjectArrayToXElement(messageList.Skip(1).ToList()));
         }
 
         /// <summary>
@@ -76,7 +92,13 @@ namespace QuickBooks.Net.Utilities
             var statusCode = response.Attribute("statusCode").Value;
             var statusMessage = response.Attribute("statusMessage").Value;
             if (statusCode != "0" && statusCode != "1")
+            {
+                _log.ErrorFormat("Error in qbxml response. StatusCode: {0}, StatusMessage: {1} \nQBXML Request:\n{2}",
+                    statusCode,
+                    statusMessage, 
+                    _xmlBase.Xml.ToString());
                 throw new QBException(statusMessage, statusCode);
+            }
         }
 
         /// <summary>

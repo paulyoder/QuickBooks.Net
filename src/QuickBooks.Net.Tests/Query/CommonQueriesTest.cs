@@ -7,7 +7,7 @@ using Rhino.Mocks;
 using System.Xml.Linq;
 using QuickBooks.Net.Query;
 using QuickBooks.Net.Domain;
-using QuickBooks.Net.Utilities.DateTimeExtensions;
+using QuickBooks.Net.Utilities.ConversionExtensions;
 using QuickBooks.Net.Tests.Query;
 using QuickBooks.Net.Tests.Utilities;
 
