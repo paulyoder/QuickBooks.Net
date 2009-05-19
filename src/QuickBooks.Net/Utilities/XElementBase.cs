@@ -9,11 +9,13 @@ namespace QuickBooks.Net.Utilities
     public class XElementBase
     {
         public virtual XElement Xml { get; protected set; }
+        public virtual ElementPosition ElementOrder { get; protected set; }
         protected string _xmlRootElementName;
 
         public XElementBase(string xmlRootElementName)
         {
             _xmlRootElementName = xmlRootElementName;
+            ElementOrder = new ElementPosition(_xmlRootElementName);
             ResetXml();
         }
 
@@ -44,7 +46,7 @@ namespace QuickBooks.Net.Utilities
         /// <param name="allowDuplicates">If true, old child XElements are not overwritten</param>
         public virtual void AddUpdateXElement(XElement newXElement, bool allowDuplicates)
         {
-            AddUpdateXElement(newXElement, Xml, allowDuplicates);
+            AddUpdateXElement(newXElement, Xml, allowDuplicates, ElementOrder);
         }
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace QuickBooks.Net.Utilities
         /// <param name="newXElement">Child XElement to add/update</param>
         /// <param name="parent">XElement to add the newXElement to</param>
         /// <param name="allowDuplicates">If true, old child XElements are not overwritten</param>
-        protected virtual void AddUpdateXElement(XElement newXElement, XElement parent, bool allowDuplicates)
+        protected virtual void AddUpdateXElement(XElement newXElement, XElement parent, bool allowDuplicates, ElementPosition parentElementPosition)
         {
             var firstGeneration = from child in parent.Descendants()
                                   where child.Parent.Name == parent.Name
@@ -64,15 +66,62 @@ namespace QuickBooks.Net.Utilities
                          select child).FirstOrDefault();
 
             if (match == null)
-                parent.Add(newXElement);
+                InsertAndOrderChild(parent, newXElement, parentElementPosition);
             else
                 if (newXElement.Descendants().Count() == 0)
                     if (allowDuplicates)
-                        parent.Add(newXElement);
+                        InsertAndOrderChild(parent, newXElement, parentElementPosition);
                     else
                         match.SetValue(newXElement.Value);
                 else
-                    AddUpdateXElement(newXElement.Descendants().First(), match, allowDuplicates);
+                    AddUpdateXElement(newXElement.Descendants().First(), 
+                        match, 
+                        allowDuplicates, 
+                        parentElementPosition.ChildrenOrder.FirstOrDefault(x => x.Name == newXElement.Name));
+        }
+
+        protected virtual void InsertAndOrderChild(XElement parent, XElement child, ElementPosition parentPosition)
+        {
+            if (parentPosition == null ||
+                parent.Descendants().Count() == 0)
+            {
+                parent.Add(child);
+                return;
+            }
+
+            var childPosition = parentPosition.ChildrenOrder.IndexOf(
+                parentPosition.ChildrenOrder.FirstOrDefault(x => x.Name == child.Name));
+
+            if (childPosition == -1)
+            {
+                parent.Add(child);
+                return;
+            }
+
+            var insertAfter = FindSiblingToInsertAfter(parent, parentPosition, childPosition);
+
+            if (insertAfter == null)
+                AddSameChildrenInOrder(parent, child);
+            else
+                insertAfter.AddAfterSelf(child);
+        }
+
+        private void AddSameChildrenInOrder(XElement parent, XElement child)
+        {
+            if (parent.Descendants(child.Name).Count() == 0)
+                parent.Descendants().First().AddBeforeSelf(child);
+            else
+                parent.Descendants(child.Name).Last().AddAfterSelf(child);
+        }
+
+        private XElement FindSiblingToInsertAfter(XElement parent, ElementPosition parentPosition, int childPosition)
+        {
+            for (int i = childPosition - 1; i >= 0; i--)
+            {
+                if (parent.Element(parentPosition.ChildrenOrder[i].Name) != null)
+                    return parent.Element(parentPosition.ChildrenOrder[i].Name);
+            }
+            return null;
         }
 
         /// <summary>

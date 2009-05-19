@@ -24,5 +24,16 @@ namespace QuickBooks.Net.Add
                 return _customerAdd;
             }
         }
+
+        protected IVendorAdd _vendorAdd;
+        public IVendorAdd Vendor
+        {
+            get
+            {
+                if (_vendorAdd == null)
+                    _vendorAdd = new VendorAdd(_session);
+                return _vendorAdd;
+            }
+        }
     }
 }

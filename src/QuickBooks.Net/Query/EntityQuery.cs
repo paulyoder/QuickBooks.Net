@@ -6,6 +6,7 @@ using QuickBooks.Net.Domain;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.IO;
+using QuickBooks.Net.Utilities;
 
 namespace QuickBooks.Net.Query
 {
@@ -40,6 +41,24 @@ namespace QuickBooks.Net.Query
                 list.Add((EntityBase)serializer.Deserialize(new StringReader(item.ToString(SaveOptions.None))));
 
             return list;
+        }
+
+        protected override void SetElementOrder()
+        {
+            AddElementOrder(
+                "ListID",
+                "FullName",
+                "MaxReturned",
+                "ActiveStatus",
+                "FromModifiedDate",
+                "ToModifiedDate",
+                new ElementPosition("NameFilter",
+                    "MatchCriterion",
+                    "Name"),
+                new ElementPosition("NameRangerFilter",
+                    "FromName",
+                    "toName"),
+                "IncludeRetElement");
         }
     }
 }

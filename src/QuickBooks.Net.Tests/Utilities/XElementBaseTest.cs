@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace QuickBooks.Net.Tests.Utilities
 {
     [TestFixture]
-    public class XmlElementBaseTest : XmlTestUtilities
+    public class XElementBaseTest : XmlTestUtilities
     {
         private XElementBase _xmlBase;
 
@@ -84,6 +84,134 @@ namespace QuickBooks.Net.Tests.Utilities
                 new XElement("Family",
                     new XElement("Brother", "Andy")));
 
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_orders_first_level_xml_elements_middle_is_last()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Sister");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Brother");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Spouse");
+
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"));
+            _xmlBase.AddUpdateXElement(new XElement("Spouse", "?"));
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andy"));
+
+            var expected = new XElement("Root",
+                new XElement("Sister", "Sara"),
+                new XElement("Brother", "Andy"),
+                new XElement("Spouse", "?"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_allow_duplicates_orders_same_child_names()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Sister");
+
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Cami"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"), true);
+
+            var expected = new XElement("Root",
+                new XElement("Sister", "Cami"),
+                new XElement("Sister", "Sara"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_orders_first_level_xml_elements_first_is_last()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Sister");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Brother");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Spouse");
+
+            _xmlBase.AddUpdateXElement(new XElement("Spouse", "?"));
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andy"));
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"));
+
+            var expected = new XElement("Root",
+                new XElement("Sister", "Sara"),
+                new XElement("Brother", "Andy"),
+                new XElement("Spouse", "?"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_allow_duplicates_orders_first_level_xml_elements_middle_is_last()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Sister");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Brother");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Spouse");
+
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Spouse", "?"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andy"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Ben"), true);
+
+            var expected = new XElement("Root",
+                new XElement("Sister", "Sara"),
+                new XElement("Brother", "Ben"),
+                new XElement("Brother", "Andy"),
+                new XElement("Spouse", "?"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_allow_duplicates_orders_first_level_xml_elements_first_is_last()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Sister");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Brother");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Spouse");
+
+            _xmlBase.AddUpdateXElement(new XElement("Spouse", "?"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andy"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"), true);
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Cami"), true);
+
+            var expected = new XElement("Root",
+                new XElement("Sister", "Sara"),
+                new XElement("Sister", "Cami"),
+                new XElement("Brother", "Andy"),
+                new XElement("Spouse", "?"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_orders_second_level_xml_elements_first_is_last()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add(new ElementPosition("Sister", "Name", "Age", "City"));
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Brother");
+            _xmlBase.ElementOrder.ChildrenOrder.Add("Spouse");
+
+            _xmlBase.AddUpdateXElement(new XElement("Spouse", "?"));
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andy"));
+            _xmlBase.AddUpdateXElement(new XElement("Sister",
+                new XElement("Age", "24")));
+            _xmlBase.AddUpdateXElement(new XElement("Sister",
+                new XElement("City", "Nappanee")));
+            _xmlBase.AddUpdateXElement(new XElement("Sister",
+                new XElement("Name", "Sara")));
+
+            var expected = new XElement("Root",
+                new XElement("Sister", 
+                    new XElement("Name","Sara"),
+                    new XElement("Age","24"),
+                    new XElement("City","Nappanee")),
+                new XElement("Brother", "Andy"),
+                new XElement("Spouse", "?"));
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateXElement_orders_by_first_come_if_not_in_ElementOrder()
+        {
+            _xmlBase.AddUpdateXElement(new XElement("Brother", "Andrew"));
+            _xmlBase.AddUpdateXElement(new XElement("Sister", "Sara"));
+
+            var expected = new XElement("Root",
+                new XElement("Brother", "Andrew"),
+                new XElement("Sister", "Sara"));
             AssertXmlAreEqual(expected, _xmlBase.Xml);
         }
 

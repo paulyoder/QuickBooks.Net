@@ -33,6 +33,21 @@ namespace QuickBooks.Net.Utilities
             }
             catch (IndexOutOfRangeException) { }
             _xmlBase = new XElementBase(requestName);
+
+            SetElementOrder();
+        }
+
+        /// <summary>
+        /// Called at instantiation to set the element order on the QBXML message
+        /// Override this method on inherited classes to set the element order
+        /// </summary>
+        protected virtual void SetElementOrder()
+        { }
+
+        protected void AddElementOrder(params ElementPosition[] elementOrder)
+        {
+            foreach (var element in elementOrder)
+                _xmlBase.ElementOrder.ChildrenOrder.Add(element);
         }
 
         /// <summary>

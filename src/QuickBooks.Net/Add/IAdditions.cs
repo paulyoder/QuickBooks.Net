@@ -8,5 +8,6 @@ namespace QuickBooks.Net.Add
     public interface IAdditions
     {
         ICustomerAdd Customer { get; }
+        IVendorAdd Vendor { get; }
     }
 }

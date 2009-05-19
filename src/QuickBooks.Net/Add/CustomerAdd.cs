@@ -8,69 +8,17 @@ using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Add
 {
-    public class CustomerAdd : QBXMLBase<Customer>, ICustomerAdd
+    public class CustomerAdd : EntityAddBase<ICustomerAdd, Customer>, ICustomerAdd
     {
         public CustomerAdd(IQBSessionInternal session)
-            : base(session, "CustomerAddRq", "CustomerAddRs")
-        { }
-
-        protected override void AddUpdateMessage(params object[] message)
+            : base(session, "CustomerAddRq", "CustomerAddRs", "CustomerAdd")
         {
-            base.AddUpdateMessage(
-                new List<object>().Ad("CustomerAdd").AdRange(message).ToArray());
-        }
-
-        protected override void AddMessageAllowDuplicates(params object[] message)
-        {
-            base.AddMessageAllowDuplicates(
-                new List<object>().Ad("CustomerAdd").AdRange(message).ToArray());
-        }
-
-        public virtual ICustomerAdd Name(string name)
-        {
-            AddUpdateMessage("Name", name);
-            return this;
-        }
-
-        public virtual ICustomerAdd IsActive(bool isActive)
-        {
-            AddUpdateMessage("IsActive", isActive);
-            return this;
+            _returnAdd = this;
         }
 
         public virtual ICustomerAdd Parent(Reference parentRef)
         {
             AddReference("ParentRef", parentRef);
-            return this;
-        }
-
-        public virtual ICustomerAdd CompanyName(string companyName)
-        {
-            AddUpdateMessage("CompanyName", companyName);
-            return this;
-        }
-
-        public virtual ICustomerAdd Salutation(string salutation)
-        {
-            AddUpdateMessage("Salutation", salutation);
-            return this;
-        }
-
-        public virtual ICustomerAdd FirstName(string firstName)
-        {
-            AddUpdateMessage("FirstName", firstName);
-            return this;
-        }
-
-        public virtual ICustomerAdd MiddleName(string middleName)
-        {
-            AddUpdateMessage("MiddleName", middleName);
-            return this;
-        }
-
-        public virtual ICustomerAdd LastName(string lastName)
-        {
-            AddUpdateMessage("LastName", lastName);
             return this;
         }
 
@@ -86,69 +34,15 @@ namespace QuickBooks.Net.Add
             return this;
         }
 
-        public virtual ICustomerAdd Phone(string phone)
-        {
-            AddUpdateMessage("Phone", phone);
-            return this;
-        }
-
-        public virtual ICustomerAdd AltPhone(string altPhone)
-        {
-            AddUpdateMessage("AltPhone", altPhone);
-            return this;
-        }
-
-        public virtual ICustomerAdd Fax(string fax)
-        {
-            AddUpdateMessage("Fax", fax);
-            return this;
-        }
-
-        public virtual ICustomerAdd Email(string email)
-        {
-            AddUpdateMessage("Email", email);
-            return this;
-        }
-
-        public virtual ICustomerAdd Contact(string contact)
-        {
-            AddUpdateMessage("Contact", contact);
-            return this;
-        }
-
-        public virtual ICustomerAdd AltContact(string altContact)
-        {
-            AddUpdateMessage("AltContact", altContact);
-            return this;
-        }
-
         public virtual ICustomerAdd CustomerType(Reference typeRef)
         {
             AddReference("CustomerTypeRef", typeRef);
             return this;
         }
 
-        public virtual ICustomerAdd Terms(Reference termsRef)
-        {
-            AddReference("TermsRef", termsRef);
-            return this;
-        }
-
         public virtual ICustomerAdd SalesRep(Reference salesRef)
         {
             AddReference("SalesRepRef", salesRef);
-            return this;
-        }
-
-        public virtual ICustomerAdd OpenBalance(decimal openBalance)
-        {
-            AddUpdateMessage("OpenBalance", openBalance);
-            return this;
-        }
-
-        public virtual ICustomerAdd OpenBalanceDate(DateTime balanceDate)
-        {
-            AddUpdateMessage("OpenBalanceDate", balanceDate);
             return this;
         }
 
@@ -167,18 +61,6 @@ namespace QuickBooks.Net.Add
         public virtual ICustomerAdd ResaleNumber(string resaleNumber)
         {
             AddUpdateMessage("ResaleNumber", resaleNumber);
-            return this;
-        }
-
-        public virtual ICustomerAdd AccountNumber(string accountNumber)
-        {
-            AddUpdateMessage("AccountNumber", accountNumber);
-            return this;
-        }
-
-        public virtual ICustomerAdd CreditLimit(decimal creditLimit)
-        {
-            AddUpdateMessage("CreditLimit", creditLimit);
             return this;
         }
 
@@ -230,22 +112,9 @@ namespace QuickBooks.Net.Add
             return this;
         }
 
-        public virtual ICustomerAdd Notes(string notes)
-        {
-            AddUpdateMessage("Notes", notes);
-            return this;
-        }
-
         public virtual ICustomerAdd PriceLevel(Reference priceLevel)
         {
             AddReference("PriceLevelRef", priceLevel);
-            return this;
-        }
-
-        public virtual ICustomerAdd IncludeRetElement(params string[] retElements)
-        {
-            foreach (var elementName in retElements)
-                AddMessageAllowDuplicates("IncludeRetElement", elementName);
             return this;
         }
 
@@ -333,52 +202,74 @@ namespace QuickBooks.Net.Add
             return XMLtoPOCOList(response).First();
         }
 
-        protected virtual void AddReference(string elementName, Reference reference)
+       
+        protected override void SetElementOrder()
         {
-            if (!String.IsNullOrEmpty(reference.ListID))
-                AddUpdateMessage(elementName, "ListID", reference.ListID);
-            if (!String.IsNullOrEmpty(reference.FullName))
-                AddUpdateMessage(elementName, "FullName", reference.FullName);
-        }
-
-        protected void AddAddress(string elementName, Address address)
-        {
-            if (!String.IsNullOrEmpty(address.Addr1))
-                AddUpdateMessage(elementName, "Addr1", address.Addr1);
-            if (!String.IsNullOrEmpty(address.Addr2))
-                AddUpdateMessage(elementName, "Addr2", address.Addr2);
-            if (!String.IsNullOrEmpty(address.Addr3))
-                AddUpdateMessage(elementName, "Addr3", address.Addr3);
-            if (!String.IsNullOrEmpty(address.Addr4))
-                AddUpdateMessage(elementName, "Addr4", address.Addr4);
-            if (!String.IsNullOrEmpty(address.Addr5))
-                AddUpdateMessage(elementName, "Addr5", address.Addr5);
-            if (!String.IsNullOrEmpty(address.City))
-                AddUpdateMessage(elementName, "City", address.City);
-            if (!String.IsNullOrEmpty(address.State))
-                AddUpdateMessage(elementName, "State", address.State);
-            if (!String.IsNullOrEmpty(address.PostalCode))
-                AddUpdateMessage(elementName, "PostalCode", address.PostalCode);
-            if (!String.IsNullOrEmpty(address.Country))
-                AddUpdateMessage(elementName, "Country", address.Country);
-            if (!String.IsNullOrEmpty(address.Note))
-                AddUpdateMessage(elementName, "Note", address.Note);
-        }
-
-        protected virtual void AddCCInfo(string elementName, CCInfo creditCard)
-        {
-            if (!String.IsNullOrEmpty(creditCard.CreditCardNumber))
-                AddUpdateMessage(elementName, "CreditCardNumber", creditCard.CreditCardNumber);
-            if (creditCard.ExpirationMonth != 0)
-                AddUpdateMessage(elementName, "ExpirationMonth", creditCard.ExpirationMonth);
-            if (creditCard.ExpirationYear != 0)
-                AddUpdateMessage(elementName, "ExpirationYear", creditCard.ExpirationYear);
-            if (!String.IsNullOrEmpty(creditCard.NameOnCard))
-                AddUpdateMessage(elementName, "NameOnCard", creditCard.NameOnCard);
-            if (!String.IsNullOrEmpty(creditCard.CreditCardAddress))
-                AddUpdateMessage(elementName, "CreditCardAddress", creditCard.CreditCardAddress);
-            if (!String.IsNullOrEmpty(creditCard.CreditCardPostalCode))
-                AddUpdateMessage(elementName, "CreditCardPostalCode", creditCard.CreditCardPostalCode);
+            AddElementOrder(
+                new ElementPosition("CustomerAdd",
+                    "Name",
+                    "IsActive",
+                    ElementPosition.Ref("ParentRef"),
+                    "CompanyName",
+                    "Salutation",
+                    "FirstName",
+                    "MiddleName",
+                    "LastName",
+                    new ElementPosition("BillAddress",
+                        "Addr1",
+                        "Addr2",
+                        "Addr3",
+                        "Addr4",
+                        "Addr5",
+                        "City",
+                        "State",
+                        "PostalCode",
+                        "Country",
+                        "Note"),
+                    new ElementPosition("ShipAddress",
+                        "Addr1",
+                        "Addr2",
+                        "Addr3",
+                        "Addr4",
+                        "Addr5",
+                        "City",
+                        "State",
+                        "PostalCode",
+                        "Country",
+                        "Note"),
+                    "Phone",
+                    "AltPhone",
+                    "Fax",
+                    "Email",
+                    "Contact",
+                    "AltContact",
+                    ElementPosition.Ref("CustomerTypeRef"),
+                    ElementPosition.Ref("TermsRef"),
+                    ElementPosition.Ref("SalesRepRef"),
+                    "OpenBalance",
+                    "OpenBalanceDate",
+                    ElementPosition.Ref("SalesTaxCodeRef"),
+                    ElementPosition.Ref("ItemsSalesTaxRef"),
+                    "ResaleNumber",
+                    "AccountNumber",
+                    "CreditLimit",
+                    ElementPosition.Ref("PrefferredPaymentMethodRef"),
+                    new ElementPosition("CreditCardInfo",
+                        "CreditCardNumber",
+                        "ExpirationMonth",
+                        "ExpirationYear",
+                        "NameOnCard",
+                        "CreditCardAddress",
+                        "CreditCardPostalCode"),
+                    "JobStatus",
+                    "JobStartDate",
+                    "JobProjectedEndDate",
+                    "JobEndDate",
+                    "JobDesc",
+                    ElementPosition.Ref("JobTypeRef"),
+                    "Notes",
+                    ElementPosition.Ref("PriceLevelRef"),
+                    "IncludeRetElement"));
         }
     }
 }

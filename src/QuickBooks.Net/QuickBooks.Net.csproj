@@ -54,8 +54,11 @@
   <ItemGroup>
     <Compile Include="Add\Additions.cs" />
     <Compile Include="Add\CustomerAdd.cs" />
+    <Compile Include="Add\EntityAddBase.cs" />
     <Compile Include="Add\IAdditions.cs" />
     <Compile Include="Add\ICustomerAdd.cs" />
+    <Compile Include="Add\IVendorAdd.cs" />
+    <Compile Include="Add\VendorAdd.cs" />
     <Compile Include="ConnectionType.cs" />
     <Compile Include="Domain\Address.cs" />
     <Compile Include="Domain\AddressBlock.cs" />
@@ -130,6 +133,7 @@
     <Compile Include="Reports\ReportBase.cs" />
     <Compile Include="Reports\Reports.cs" />
     <Compile Include="Utilities\ConversionExtensions.cs" />
+    <Compile Include="Utilities\ElementPosition.cs" />
     <Compile Include="Utilities\QBXMLBase.cs" />
     <Compile Include="Utilities\XElementBase.cs" />
   </ItemGroup>

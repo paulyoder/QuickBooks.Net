@@ -28,5 +28,52 @@ namespace QuickBooks.Net.Reports
             AddUpdateMessage("CustomDetailReportType", reportType);
             return this;
         }
+
+        protected override void SetElementOrder()
+        {
+            AddElementOrder(
+                "CustomDetailReportType",
+                "DisplayReport",
+                new ElementPosition("ReportPeriod",
+                    "FromReportDate",
+                    "ToReportDate"),
+                "ReportDateMacro",
+                new ElementPosition("ReportAccountFilter",
+                    "AccountTypeFilter",
+                    "ListID",
+                    "FullName",
+                    "ListIDWithChildren",
+                    "FullNameWithChildren"),
+                new ElementPosition("ReportEntityFilter",
+                    "EntityTypeFilter",
+                    "ListID",
+                    "FullName",
+                    "ListIDWithChildren",
+                    "FullNameWithChildren"),
+                new ElementPosition("ReportItemFilter",
+                    "ItemTypeFilter",
+                    "ListID",
+                    "FullName",
+                    "ListIDWithChildren",
+                    "FullNameWithChildren"),
+                new ElementPosition("ReportClassFilter",
+                    "ListID",
+                    "FullName",
+                    "ListIDWithChildren",
+                    "FullNameWithChildren"),
+                new ElementPosition("ReportTxnTypeFilter",
+                    "TxnTypeFilter"),
+                new ElementPosition("ReportModifiedDateRangeFilter",
+                    "FromReportModifiedDate",
+                    "ToReportModifiedDate"),
+                "ReportModifiedDateRangeMacro",
+                "ReportDetailLevelFilter",
+                "ReportPostingStatusFilter",
+                "SummarizeRowsBy",
+                "IncludeColumn",
+                "IncludeAccounts",
+                "ReportOpenBalanceAsOf",
+                "ReportBasis");
+        }
     }
 }

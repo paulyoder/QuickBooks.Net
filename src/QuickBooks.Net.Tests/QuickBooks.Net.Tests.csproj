@@ -66,6 +66,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryResponses.cs" />
     <Compile Include="Reports\ReportBaseTest.cs" />
+    <Compile Include="Utilities\ElementPositionTest.cs" />
     <Compile Include="Utilities\QBXMLBaseTest.cs" />
     <Compile Include="Utilities\XElementBaseTest.cs" />
     <Compile Include="XmlTestUtilities.cs" />

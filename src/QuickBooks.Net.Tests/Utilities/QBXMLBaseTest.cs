@@ -147,7 +147,7 @@ namespace QuickBooks.Net.Net.Tests.Utilities
         {
             var expected = new XElement("ClassQueryRq",
                 new XElement("AccountFilter",
-                    new XElement("AccountOpenDate", "2009-01-01T00:00:00")));
+                    new XElement("AccountOpenDate", "2009-01-01")));
             var actual = new QBXMLBaseChild()
                 .ConvertObjectArrayToXElement(
                     new List<object>() { "ClassQueryRq", "AccountFilter", "AccountOpenDate", new DateTime(2009, 1, 1) });
