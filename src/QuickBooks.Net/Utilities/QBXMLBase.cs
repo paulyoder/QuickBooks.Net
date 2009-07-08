@@ -56,6 +56,8 @@ namespace QuickBooks.Net.Utilities
         /// <param name="message">Message to add</param>
         protected virtual void AddUpdateMessage(params object[] message)
         {
+            if (message.Last() == null)
+                return;
             _xmlBase.AddUpdateXElement(ConvertObjectArrayToXElement(message.ToList()));
         }
 
@@ -65,6 +67,8 @@ namespace QuickBooks.Net.Utilities
         /// <param name="message">Message to add</param>
         protected virtual void AddMessageAllowDuplicates(params object[] message)
         {
+            if (message.Last() == null)
+                return;
             _xmlBase.AddUpdateXElement(ConvertObjectArrayToXElement(message.ToList()), true);
         }
 
