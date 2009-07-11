@@ -31,6 +31,6 @@ namespace QuickBooks.Net.Domain
         public virtual string AccountNumber { get; set; }
         public virtual string Notes { get; set; }
         [XmlElement("DataExtRet")]
-        public virtual List<DataExt> DataExtList { get; set; }
+        public virtual List<DataExt> DataExt { get; set; }
     }
 }

@@ -8,7 +8,9 @@ using QuickBooks.Net.Utilities.ConversionExtensions;
 
 namespace QuickBooks.Net.Add
 {
-    public class CustomerAdd : EntityAddBase<ICustomerAdd, Customer>, ICustomerAdd
+    public class CustomerAdd : 
+        EntityAddBase<ICustomerAdd, Customer>, 
+        ICustomerAdd
     {
         public CustomerAdd(IQBSessionInternal session)
             : base(session, "CustomerAddRq", "CustomerAddRs", "CustomerAdd")
@@ -193,15 +195,6 @@ namespace QuickBooks.Net.Add
                 PriceLevel(customer.PriceLevelRef);
             return this;
         }
-
-        public virtual Customer Add()
-        {
-            var response = _session.ProcessRequest(_xmlBase.Xml).Descendants(_responseName).First();
-            CheckForErrorMessageInResponse(response);
-            _xmlBase.ResetXml();
-            return XMLtoPOCOList(response).First();
-        }
-
        
         protected override void SetElementOrder()
         {

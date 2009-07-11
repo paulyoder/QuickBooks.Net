@@ -5,7 +5,8 @@ using System.Text;
 
 namespace QuickBooks.Net.Query
 {
-    public interface ICommonTransactionQueries<IReturnQuery, TReturn> : IQueryBase<TReturn>
+    public interface ICommonTransactionQueries<IReturnQuery, TReturn> : 
+        IQueryBase<TReturn>
     {
         IReturnQuery TxnID(params string[] txnIDs);
         IReturnQuery MaxReturned(int maxReturned);
@@ -23,6 +24,7 @@ namespace QuickBooks.Net.Query
         IReturnQuery AccountFullName(params string[] accountFullNames);
         IReturnQuery AccountFullNameWithChildren(string accountFullName);
         IReturnQuery IncludeLineItems();
+        IReturnQuery IncludeRetElement(params string[] retElements);
         IReturnQuery OwnerID(params string[] ownerID);
     }
 }

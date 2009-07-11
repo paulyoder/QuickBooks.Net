@@ -35,5 +35,16 @@ namespace QuickBooks.Net.Add
                 return _vendorAdd;
             }
         }
+
+        protected IJournalEntryAdd _journalAdd;
+        public IJournalEntryAdd JournalEntry
+        {
+            get
+            {
+                if (_journalAdd == null)
+                    _journalAdd = new JournalEntryAdd(_session);
+                return _journalAdd;
+            }
+        }
     }
 }

@@ -14,6 +14,17 @@ namespace QuickBooks.Net.Query
             _session = session;
         }
 
+        protected IAccountQuery _account;
+        public IAccountQuery Account
+        {
+            get
+            {
+                if (_account == null)
+                    _account = new AccountQuery(_session);
+                return _account;
+            }
+        }
+
         protected IClassQuery _class;
         public IClassQuery Class
         {
@@ -99,6 +110,17 @@ namespace QuickBooks.Net.Query
                 if (_vendor == null)
                     _vendor = new VendorQuery(_session);
                 return _vendor;
+            }
+        }
+
+        protected IJournalEntryQuery _journalEntry;
+        public IJournalEntryQuery JournalEntry
+        {
+            get
+            {
+                if (_journalEntry == null)
+                    _journalEntry = new JournalEntryQuery(_session);
+                return _journalEntry;
             }
         }
     }

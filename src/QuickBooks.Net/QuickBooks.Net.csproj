@@ -52,17 +52,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Add\AddBase.cs" />
     <Compile Include="Add\Additions.cs" />
     <Compile Include="Add\CustomerAdd.cs" />
     <Compile Include="Add\EntityAddBase.cs" />
     <Compile Include="Add\IAdditions.cs" />
     <Compile Include="Add\ICustomerAdd.cs" />
+    <Compile Include="Add\IJournalEntryAdd.cs" />
     <Compile Include="Add\IVendorAdd.cs" />
+    <Compile Include="Add\JournalEntryAdd.cs" />
     <Compile Include="Add\VendorAdd.cs" />
     <Compile Include="ConnectionType.cs" />
+    <Compile Include="Domain\Account.cs" />
     <Compile Include="Domain\Address.cs" />
     <Compile Include="Domain\AddressBlock.cs" />
     <Compile Include="Domain\CCInfo.cs" />
+    <Compile Include="Domain\JournalEntry.cs" />
+    <Compile Include="Domain\JournalLine.cs" />
     <Compile Include="Domain\ReportColumn.cs" />
     <Compile Include="Domain\ReportColumnDescription.cs" />
     <Compile Include="Domain\CreditCardCharge.cs" />
@@ -80,12 +86,21 @@
     <Compile Include="Domain\Vendor.cs" />
     <Compile Include="FileMode.cs" />
     <Compile Include="IQBSessionFactory.cs" />
+    <Compile Include="Modify\IJournalEntryMod.cs" />
+    <Compile Include="Modify\IModifications.cs" />
+    <Compile Include="Modify\JournalEntryMod.cs" />
+    <Compile Include="Modify\Modifications.cs" />
+    <Compile Include="Modify\ModifyBase.cs" />
     <Compile Include="QBSessionFactory.cs" />
+    <Compile Include="Query\AccountQuery.cs" />
     <Compile Include="Query\ClassQuery.cs" />
     <Compile Include="Query\CommonQueries.cs" />
     <Compile Include="Query\CommonTransactionQueries.cs" />
     <Compile Include="Query\CommonTransactionQueriesWithRefNumber.cs" />
     <Compile Include="Query\CreditCardChargeQuery.cs" />
+    <Compile Include="Query\IAccountQuery.cs" />
+    <Compile Include="Query\IJournalEntryQuery.cs" />
+    <Compile Include="Query\JournalEntryQuery.cs" />
     <Compile Include="Reports\CustomDetailReport.cs" />
     <Compile Include="Query\CustomerQuery.cs" />
     <Compile Include="Query\DepositQuery.cs" />

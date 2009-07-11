@@ -104,14 +104,6 @@ namespace QuickBooks.Net.Add
             return this;
         }
 
-        public virtual Vendor Add()
-        {
-            var response = _session.ProcessRequest(_xmlBase.Xml).Descendants(_responseName).First();
-            CheckForErrorMessageInResponse(response);
-            _xmlBase.ResetXml();
-            return XMLtoPOCOList(response).First();
-        }
-
         protected override void SetElementOrder()
         {
             AddElementOrder(

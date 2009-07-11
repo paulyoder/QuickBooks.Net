@@ -11,6 +11,7 @@ using QuickBooks.Net.Reports;
 using QuickBooks.Net.Domain;
 using System.Runtime.InteropServices;
 using QuickBooks.Net.Add;
+using QuickBooks.Net.Modify;
 
 namespace QuickBooks.Net
 {
@@ -25,6 +26,7 @@ namespace QuickBooks.Net
         public virtual IQueries Query { get; protected set; }
         public virtual IReports Report { get; protected set; }
         public virtual IAdditions Add { get; protected set; }
+        public virtual IModifications Modify { get; protected set; }
 
         internal QBSession(QBSessionFactory sessionFactory, string qbXmlVersion, string ticket)
         {
@@ -37,6 +39,7 @@ namespace QuickBooks.Net
             Query = new Queries(this);
             Report = new Reports.Reports(this);
             Add = new Additions(this);
+            Modify = new Modifications(this);
         }
 
         public XElement ProcessRequest(XElement QBXmlMsgsRq)

@@ -24,6 +24,11 @@ namespace QuickBooks.Net.Net.Tests.Utilities
                 base.AddUpdateMessage(message);
             }
 
+            public new void AddUpdateMessage(XElement parent, ElementPosition parentElementPosition, params object[] message)
+            {
+                base.AddUpdateMessage(parent, parentElementPosition, message);
+            }
+
             public new void AddMessageAllowDuplicates(params object[] message)
             {
                 base.AddMessageAllowDuplicates(message);
@@ -74,6 +79,35 @@ namespace QuickBooks.Net.Net.Tests.Utilities
         }
 
         [Test]
+        public void AddUpdateMessage_doesnt_add_message_if_last_value_is_null()
+        {
+            var qbxmlBase = new QBXMLBaseChild();
+            qbxmlBase.AddUpdateMessage("MaxReturned", "20");
+            qbxmlBase.AddUpdateMessage("ListID", null);
+
+            var expected = new XElement("ClassQueryRq",
+                new XElement("MaxReturned", "20"));
+            AssertXmlAreEqual(expected, qbxmlBase.Xml);
+        }
+
+        [Test]
+        public void AddUpdateMessage_parentXML_doesnt_add_message_if_last_value_is_null()
+        {
+            var qbxmlBase = new QBXMLBaseChild();
+            var xml = new XElement("ClassQueryRq");
+            var order = new ElementPosition("ClassQueryRq",
+                "MaxReturned",
+                "ListID");
+
+            qbxmlBase.AddUpdateMessage(xml, order, "MaxReturned", null);
+            qbxmlBase.AddUpdateMessage(xml, order, "ListID", 22);
+
+            var expected = new XElement("ClassQueryRq",
+                new XElement("ListID", "22"));
+            AssertXmlAreEqual(expected, xml);
+        }
+
+        [Test]
         public void AddMessageAllowDuplicates_adds_new_message()
         {
             var qbxmlBase = new QBXMLBaseChild();
@@ -90,6 +124,20 @@ namespace QuickBooks.Net.Net.Tests.Utilities
             var qbxmlBase = new QBXMLBaseChild();
             qbxmlBase.AddMessageAllowDuplicates("MaxReturned", "20");
             qbxmlBase.AddMessageAllowDuplicates("MaxReturned", "40");
+
+            var expected = new XElement("ClassQueryRq",
+                new XElement("MaxReturned", "20"),
+                new XElement("MaxReturned", "40"));
+            AssertXmlAreEqual(expected, qbxmlBase.Xml);
+        }
+
+        [Test]
+        public void AddMessageAllowDuplicates_doesnt_add_message_if_last_value_is_null()
+        {
+            var qbxmlBase = new QBXMLBaseChild();
+            qbxmlBase.AddMessageAllowDuplicates("MaxReturned", "20");
+            qbxmlBase.AddMessageAllowDuplicates("MaxReturned", "40");
+            qbxmlBase.AddMessageAllowDuplicates("MaxReturned", null);
 
             var expected = new XElement("ClassQueryRq",
                 new XElement("MaxReturned", "20"),

@@ -9,5 +9,6 @@ namespace QuickBooks.Net.Add
     {
         ICustomerAdd Customer { get; }
         IVendorAdd Vendor { get; }
+        IJournalEntryAdd JournalEntry { get; }
     }
 }

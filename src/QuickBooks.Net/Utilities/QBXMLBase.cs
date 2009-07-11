@@ -62,6 +62,19 @@ namespace QuickBooks.Net.Utilities
         }
 
         /// <summary>
+        /// Adds or updates an XElement message
+        /// </summary>
+        /// <param name="parent">Parent XML Element that contains the whole message</param>
+        /// <param name="parentElementPosition">ElementPosition information</param>
+        /// <param name="message">Message to add</param>
+        protected virtual void AddUpdateMessage(XElement parent, ElementPosition parentElementPosition, params object[] message)
+        {
+            if (message.Last() == null)
+                return;
+            _xmlBase.AddUpdateXElement(ConvertObjectArrayToXElement(message.ToList()), parent, false, parentElementPosition);
+        }
+
+        /// <summary>
         /// Adds a qbxml message and allows duplicate messages
         /// </summary>
         /// <param name="message">Message to add</param>

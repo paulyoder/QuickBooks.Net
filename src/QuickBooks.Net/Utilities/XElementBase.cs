@@ -55,7 +55,7 @@ namespace QuickBooks.Net.Utilities
         /// <param name="newXElement">Child XElement to add/update</param>
         /// <param name="parent">XElement to add the newXElement to</param>
         /// <param name="allowDuplicates">If true, old child XElements are not overwritten</param>
-        protected virtual void AddUpdateXElement(XElement newXElement, XElement parent, bool allowDuplicates, ElementPosition parentElementPosition)
+        public virtual void AddUpdateXElement(XElement newXElement, XElement parent, bool allowDuplicates, ElementPosition parentElementPosition)
         {
             var firstGeneration = from child in parent.Descendants()
                                   where child.Parent.Name == parent.Name
@@ -78,6 +78,11 @@ namespace QuickBooks.Net.Utilities
                         match, 
                         allowDuplicates, 
                         parentElementPosition.ChildrenOrder.FirstOrDefault(x => x.Name == newXElement.Name));
+        }
+
+        public virtual void InsertXElement(XElement parent, XElement newXElement, ElementPosition parentPosition)
+        {
+            InsertAndOrderChild(parent, newXElement, parentPosition);
         }
 
         protected virtual void InsertAndOrderChild(XElement parent, XElement child, ElementPosition parentPosition)
@@ -119,7 +124,7 @@ namespace QuickBooks.Net.Utilities
             for (int i = childPosition - 1; i >= 0; i--)
             {
                 if (parent.Element(parentPosition.ChildrenOrder[i].Name) != null)
-                    return parent.Element(parentPosition.ChildrenOrder[i].Name);
+                    return parent.Elements(parentPosition.ChildrenOrder[i].Name).Last();
             }
             return null;
         }

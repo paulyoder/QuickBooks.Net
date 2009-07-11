@@ -3,6 +3,7 @@ namespace QuickBooks.Net.Query
 {
     public interface IQueries
     {
+        IAccountQuery Account { get; }
         IClassQuery Class { get; }
         ICreditCardChargeQuery CreditCardCharge { get; }
         IDepositQuery Deposit { get; }
@@ -11,5 +12,6 @@ namespace QuickBooks.Net.Query
         IEmployeeQuery Employee { get; }
         IOtherNameQuery OtherName { get; }
         IVendorQuery Vendor { get; }
+        IJournalEntryQuery JournalEntry { get; }
     }
 }

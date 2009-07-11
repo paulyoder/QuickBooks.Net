@@ -252,5 +252,29 @@ namespace QuickBooks.Net.Tests.Utilities
 
             AssertXmlAreEqual(expected, _xmlBase.Xml);
         }
+
+        [Test]
+        public void InsertXElement_inserts_in_order()
+        {
+            _xmlBase.ElementOrder.ChildrenOrder.Add("City");
+            _xmlBase.ElementOrder.ChildrenOrder.Add(new ElementPosition("Family", "Brother", "Sister"));
+            _xmlBase.ElementOrder.ChildrenOrder.Add("State");
+
+            _xmlBase.InsertXElement(_xmlBase.Xml, new XElement("Family",
+                new XElement("Brother", "Paul")), _xmlBase.ElementOrder);
+            _xmlBase.InsertXElement(_xmlBase.Xml, new XElement("Family",
+                new XElement("Sister", "Sara")), _xmlBase.ElementOrder);
+            _xmlBase.AddUpdateXElement(new XElement("City", "Omaha"));
+            _xmlBase.AddUpdateXElement(new XElement("State", "Nebraska"));
+            var expected = new XElement("Root",
+                new XElement("City", "Omaha"),
+                new XElement("Family",
+                    new XElement("Brother", "Paul")),
+                new XElement("Family",
+                    new XElement("Sister", "Sara")),
+                new XElement("State", "Nebraska"));
+
+            AssertXmlAreEqual(expected, _xmlBase.Xml);
+        }
     }
 }

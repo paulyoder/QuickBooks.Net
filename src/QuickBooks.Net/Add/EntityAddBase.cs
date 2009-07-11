@@ -3,33 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using QuickBooks.Net.Utilities;
-using QuickBooks.Net.Utilities.ConversionExtensions;
 using QuickBooks.Net.Domain;
 
 namespace QuickBooks.Net.Add
 {
-    public class EntityAddBase<IReturnAdd, TReturn> : QBXMLBase<TReturn>
+    public class EntityAddBase<IReturnAdd, TReturn> : 
+        AddBase<IReturnAdd,TReturn>
     {
-        protected IReturnAdd _returnAdd;
-        private string _addElementName;
 
         public EntityAddBase(IQBSessionInternal session, string requestName, string responseName, string addElementName)
-            : base(session, requestName, responseName)
-        {
-            _addElementName = addElementName;
-        }
-
-        protected override void AddUpdateMessage(params object[] message)
-        {
-            base.AddUpdateMessage(
-                new List<object>().Ad(_addElementName).AdRange(message).ToArray());
-        }
-
-        protected override void AddMessageAllowDuplicates(params object[] message)
-        {
-            base.AddMessageAllowDuplicates(
-                new List<object>().Ad(_addElementName).AdRange(message).ToArray());
-        }
+            : base(session, requestName, responseName, addElementName)
+        { }
 
         public virtual IReturnAdd Name(string name)
         {
