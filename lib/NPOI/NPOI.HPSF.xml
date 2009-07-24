@@ -1,0 +1,3553 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NPOI.HPSF</name>
+    </assembly>
+    <members>
+        <member name="T:NPOI.HPSF.MutablePropertySet">
+            <summary>
+            Adds writing support To the {@link PropertySet} class.
+            Please be aware that this class' functionality will be merged into the
+            {@link PropertySet} class at a later time, so the API will Change.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-02-19
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.PropertySet">
+            <summary>
+            Represents a property Set in the Horrible Property Set Format
+            (HPSF). These are usually metadata of a Microsoft Office
+            document.
+            An application that wants To access these metadata should Create
+            an instance of this class or one of its subclasses by calling the
+            factory method {@link PropertySetFactory#Create} and then retrieve
+            the information its needs by calling appropriate methods.
+            {@link PropertySetFactory#Create} does its work by calling one
+            of the constructors {@link PropertySet#PropertySet(InputStream)} or
+            {@link PropertySet#PropertySet(byte[])}. If the constructor's
+            argument is not in the Horrible Property Set Format, i.e. not a
+            property Set stream, or if any other error occurs, an appropriate
+            exception is thrown.
+            A {@link PropertySet} has a list of {@link Section}s, and each
+            {@link Section} has a {@link Property} array. Use {@link
+            #GetSections} To retrieve the {@link Section}s, then call {@link
+            Section#GetProperties} for each {@link Section} To Get hold of the
+            {@link Property} arrays. Since the vast majority of {@link
+            PropertySet}s Contains only a single {@link Section}, the
+            convenience method {@link #GetProperties} returns the properties of
+            a {@link PropertySet}'s {@link Section} (throwing a {@link
+            NoSingleSectionException} if the {@link PropertySet} Contains more
+            (or less) than exactly one {@link Section}).
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @author Drew Varner (Drew.Varner hanginIn sc.edu)
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.OS_WIN16">
+            If the OS version field holds this value the property Set stream Was
+            Created on a 16-bit Windows system.
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.OS_MACINTOSH">
+            If the OS version field holds this value the property Set stream Was
+            Created on a Macintosh system.
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.OS_WIN32">
+            If the OS version field holds this value the property Set stream Was
+            Created on a 32-bit Windows system.
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.BYTE_ORDER_ASSERTION">
+            The "byteOrder" field must equal this value.
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.byteOrder">
+            Specifies this {@link PropertySet}'s byte order. See the
+            HPFS documentation for details!
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.FORMAT_ASSERTION">
+            The "format" field must equal this value.
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.format">
+            Specifies this {@link PropertySet}'s format. See the HPFS
+            documentation for details!
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.osVersion">
+            Specifies the version of the operating system that Created
+            this {@link PropertySet}. See the HPFS documentation for
+            details!
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.classID">
+            Specifies this {@link PropertySet}'s "classID" field. See
+            the HPFS documentation for details!
+        </member>
+        <member name="F:NPOI.HPSF.PropertySet.sections">
+            The sections in this {@link PropertySet}.
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.#ctor">
+            <summary>
+            Creates an empty (uninitialized) {@link PropertySet}
+            Please note: For the time being this
+            constructor is protected since it is used for internal purposes
+            only, but expect it To become public once the property Set's
+            writing functionality is implemented.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.#ctor(System.IO.Stream)">
+            <summary>
+            Creates a {@link PropertySet} instance from an {@link
+            InputStream} in the Horrible Property Set Format.
+            The constructor Reads the first few bytes from the stream
+            and determines whether it is really a property Set stream. If
+            it Is, it parses the rest of the stream. If it is not, it
+            Resets the stream To its beginning in order To let other
+            components mess around with the data and throws an
+            exception.
+            </summary>
+            <param name="stream">Holds the data making out the property Set
+            stream.</param>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.#ctor(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Creates a {@link PropertySet} instance from a byte array
+            that represents a stream in the Horrible Property Set
+            Format.
+            </summary>
+            <param name="stream">The byte array holding the stream data.</param>
+            <param name="offset">The offset in stream where the stream data begin. 
+            If the stream data begin with the first byte in the
+            array, the offset is 0.</param>
+            <param name="Length"> The Length of the stream data.</param>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.#ctor(System.Byte[])">
+            <summary>
+            Creates a {@link PropertySet} instance from a byte array
+            that represents a stream in the Horrible Property Set
+            Format.
+            </summary>
+            <param name="stream">The byte array holding the stream data. The
+            complete byte array contents is the stream data.</param>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.IsPropertySetStream(System.IO.Stream)">
+            <summary>
+            Checks whether an {@link InputStream} is in the Horrible
+            Property Set Format.
+            </summary>
+            <param name="stream">The {@link InputStream} To check. In order To
+            perform the check, the method Reads the first bytes from the
+            stream. After Reading, the stream is Reset To the position it
+            had before Reading. The {@link InputStream} must support the
+            {@link InputStream#mark} method.</param>
+            <returns>
+            	<c>true</c> if the stream is a property Set
+            stream; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.IsPropertySetStream(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Checks whether a byte array is in the Horrible Property Set
+            Format.
+            </summary>
+            <param name="src">The byte array To check.</param>
+            <param name="offset">The offset in the byte array.</param>
+            <param name="Length">The significant number of bytes in the byte
+            array. Only this number of bytes will be checked.</param>
+            <returns>
+            	<c>true</c> if the byte array is a property Set
+            stream; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.init(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Initializes this {@link PropertySet} instance from a byte
+            array. The method assumes that it has been checked alReady that
+            the byte array indeed represents a property Set stream. It does
+            no more checks on its own.
+            </summary>
+            <param name="src">Byte array containing the property Set stream</param>
+            <param name="offset">The property Set stream starts at this offset</param>
+            <param name="Length">Length of the property Set stream.</param>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.GetProperty(System.Int32)">
+            <summary>
+            Convenience method returning the value of the property with
+            the specified ID. If the property is not available,
+            <c>null</c> is returned and a subsequent call To {@link
+            #WasNull} will return <c>true</c> .
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The property value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.GetPropertyBooleanValue(System.Int32)">
+            <summary>
+            Convenience method returning the value of a bool property
+            with the specified ID. If the property is not available,
+            <c>false</c> is returned. A subsequent call To {@link
+            #WasNull} will return <c>true</c> To let the caller
+            distinguish that case from a real property value of
+            <c>false</c>.
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The property value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.GetPropertyIntValue(System.Int32)">
+            <summary>
+            Convenience method returning the value of the numeric
+            property with the specified ID. If the property is not
+            available, 0 is returned. A subsequent call To {@link #WasNull}
+            will return <c>true</c> To let the caller distinguish
+            that case from a real property value of 0.
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The propertyIntValue value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.Equals(System.Object)">
+            <summary>
+            Returns <c>true</c> if the <c>PropertySet</c> is equal
+            To the specified parameter, else <c>false</c>.
+            </summary>
+            <param name="o">the object To Compare this 
+            <c>PropertySet</c>
+             with</param>
+            <returns><c>true</c>
+             if the objects are equal, 
+            <c>false</c>
+            if not</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySet.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.ByteOrder">
+            <summary>
+            Gets or sets the property Set stream's low-level "byte order"
+            field. It is always <tt>0xFFFE</tt>
+            </summary>
+            <value>The property Set stream's low-level "byte order" field..</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.Format">
+            <summary>
+            Gets or sets the property Set stream's low-level "format"
+            field. It is always <tt>0x0000</tt>
+            </summary>
+            <value>The property Set stream's low-level "format" field.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.OSVersion">
+            <summary>
+            Returns the property Set stream's low-level "OS version"
+            field.
+            </summary>
+            <value>The property Set stream's low-level "OS version" field.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.ClassID">
+            <summary>
+            Gets or sets the property Set stream's low-level "class ID"
+            </summary>
+            <value>The property Set stream's low-level "class ID" field.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.SectionCount">
+            <summary>
+            Returns the number of {@link Section}s in the property
+            Set.
+            </summary>
+            <value>The number of {@link Section}s in the property Set.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.Sections">
+            <summary>
+            Returns the {@link Section}s in the property Set.
+            </summary>
+            <value>{@link Section}s in the property Set.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.IsSummaryInformation">
+            <summary>
+            Checks whether this {@link PropertySet} represents a Summary
+            Information.
+            </summary>
+            <value>
+            	<c>true</c> Checks whether this {@link PropertySet} represents a Summary
+            Information; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.IsDocumentSummaryInformation">
+            <summary>
+            Gets a value indicating whether this instance is document summary information.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is document summary information; otherwise, <c>false</c>.
+            </value>
+            Checks whether this {@link PropertySet} is a Document
+            Summary Information.
+            @return 
+            <c>true</c>
+             if this {@link PropertySet}
+            represents a Document Summary Information, else 
+            <c>false</c>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.Properties">
+            <summary>
+            Convenience method returning the {@link Property} array
+            contained in this property Set. It is a shortcut for Getting
+            the {@link PropertySet}'s {@link Section}s list and then
+            Getting the {@link Property} array from the first {@link
+            Section}.
+            </summary>
+            <value>The properties of the only {@link Section} of this
+            {@link PropertySet}.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.WasNull">
+            <summary>
+            Checks whether the property which the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access
+            Was available or not. This information might be important for
+            callers of {@link #GetPropertyIntValue} since the latter
+            returns 0 if the property does not exist. Using {@link
+            #WasNull}, the caller can distiguish this case from a
+            property's real value of 0.
+            </summary>
+            <value><c>true</c> if the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access a
+            property that Was not available; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.FirstSection">
+            <summary>
+            Gets the first section.
+            </summary>
+            <value>The first section.</value>
+        </member>
+        <member name="P:NPOI.HPSF.PropertySet.SingleSection">
+            <summary>
+            If the {@link PropertySet} has only a single section this
+            method returns it.
+            </summary>
+            <value>The singleSection value</value>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MutablePropertySet"/> class.
+            Its primary task is To initialize the immutable field with their proper
+            values. It also Sets fields that might Change To reasonable defaults.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.#ctor(NPOI.HPSF.PropertySet)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MutablePropertySet"/> class.
+            All nested elements, i.e.<c>Section</c>s and <c>Property</c> instances, will be their
+            mutable counterparts in the new <c>MutablePropertySet</c>.
+            </summary>
+            <param name="ps">The property Set To copy</param>
+        </member>
+        <member name="F:NPOI.HPSF.MutablePropertySet.OFFSet_HEADER">
+            The Length of the property Set stream header.
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.ClearSections">
+            <summary>
+            Removes all sections from this property Set.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.AddSection(NPOI.HPSF.Section)">
+            <summary>
+            Adds a section To this property Set.
+            </summary>
+            <param name="section">section The {@link Section} To Add. It will be Appended
+            after any sections that are alReady present in the property Set
+            and thus become the last section.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.Write(System.IO.Stream)">
+            <summary>
+            Writes the property Set To an output stream.
+            </summary>
+            <param name="out1">the output stream To Write the section To</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.GetStream">
+            <summary>
+            Returns the contents of this property Set stream as an input stream.
+            The latter can be used for example To Write the property Set into a POIFS
+            document. The input stream represents a snapshot of the property Set.
+            If the latter is modified while the input stream is still being
+            Read, the modifications will not be reflected in the input stream but in
+            the {@link MutablePropertySet} only.
+            </summary>
+            <returns>the contents of this property Set stream</returns>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.ToStream">
+            <summary>
+            Returns the contents of this property set stream as an input stream.
+            The latter can be used for example to write the property set into a POIFS
+            document. The input stream represents a snapshot of the property set.
+            If the latter is modified while the input stream is still being
+            read, the modifications will not be reflected in the input stream but in
+            the {@link MutablePropertySet} only.
+            </summary>
+            <returns>the contents of this property set stream</returns>
+        </member>
+        <member name="M:NPOI.HPSF.MutablePropertySet.Write(NPOI.POIFS.FileSystem.DirectoryEntry,System.String)">
+            <summary>
+            Writes a property Set To a document in a POI filesystem directory
+            </summary>
+            <param name="dir">The directory in the POI filesystem To Write the document To.</param>
+            <param name="name">The document's name. If there is alReady a document with the
+            same name in the directory the latter will be overwritten.</param>
+        </member>
+        <member name="P:NPOI.HPSF.MutablePropertySet.ByteOrder">
+            <summary>
+            Gets or sets the "byteOrder" property.
+            </summary>
+            <value>the byteOrder value To Set</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutablePropertySet.Format">
+            <summary>
+            Gets or sets the "format" property.
+            </summary>
+            <value>the format value To Set</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutablePropertySet.OSVersion">
+            <summary>
+            Gets or sets the "osVersion" property
+            </summary>
+            <value>the osVersion value To Set.</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutablePropertySet.ClassID">
+            <summary>
+            Gets or sets the property Set stream's low-level "class ID"
+            </summary>
+            <value>The property Set stream's low-level "class ID" field.</value>
+        </member>
+        <member name="T:NPOI.HPSF.WritingNotSupportedException">
+            <summary>
+            This exception is thrown when trying To Write a (yet) unsupported variant
+            type.
+            @see ReadingNotSupportedException
+            @see UnsupportedVariantTypeException
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-08-08
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.UnsupportedVariantTypeException">
+            <summary>
+            This exception is thrown if HPSF encounters a variant type that isn't
+            supported yet. Although a variant type is unsupported the value can still be
+            retrieved using the {@link VariantTypeException#GetValue} method.
+            Obviously this class should disappear some day.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-08-05
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.VariantTypeException">
+            <summary>
+            This exception is thrown if HPSF encounters a problem with a variant type.
+            Concrete subclasses specifiy the problem further.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2004-06-21
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.HPSFException">
+            <summary>
+            This exception is the superclass of all other checked exceptions thrown
+            in this package. It supports a nested "reason" throwable, i.e. an exception
+            that caused this one To be thrown.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFException"/> class.
+            </summary>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="P:NPOI.HPSF.HPSFException.Reason">
+            <summary>
+            Returns the {@link Exception} that caused this exception To
+            be thrown or null if there was no such {@link
+            Exception}.
+            </summary>
+            <value>The reason.</value>
+        </member>
+        <member name="M:NPOI.HPSF.VariantTypeException.#ctor(System.Int64,System.Object,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.VariantTypeException"/> class.
+            </summary>
+            <param name="variantType">The variant type causing the problem</param>
+            <param name="value">The value who's variant type causes the problem</param>
+            <param name="msg">A message text describing the problem</param>
+        </member>
+        <member name="P:NPOI.HPSF.VariantTypeException.VariantType">
+            <summary>
+            Gets the offending variant type
+            </summary>
+            <value>the offending variant type.</value>
+        </member>
+        <member name="P:NPOI.HPSF.VariantTypeException.Value">
+            <summary>
+            Returns the value who's variant type caused the problem.
+            </summary>
+            <value>the value who's variant type caused the problem.</value>
+        </member>
+        <member name="M:NPOI.HPSF.UnsupportedVariantTypeException.#ctor(System.Int64,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.UnsupportedVariantTypeException"/> class.
+            </summary>
+            <param name="variantType">The unsupported variant type</param>
+            <param name="value">The value who's variant type is not yet supported</param>
+        </member>
+        <member name="M:NPOI.HPSF.WritingNotSupportedException.#ctor(System.Int64,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.WritingNotSupportedException"/> class.
+            </summary>
+            <param name="variantType">The unsupported variant type.</param>
+            <param name="value">The value</param>
+        </member>
+        <member name="T:NPOI.HPSF.Property">
+            <summary>
+            A property in a {@link Section} of a {@link PropertySet}.
+            The property's ID gives the property a meaning
+            in the context of its {@link Section}. Each {@link Section} spans
+            its own name space of property IDs.
+            The property's type determines how its
+            value  is interpreted. For example, if the type Is
+            {@link Variant#VT_LPSTR} (byte string), the value consists of a
+            DWord telling how many bytes the string Contains. The bytes follow
+            immediately, including any null bytes that terminate the
+            string. The type {@link Variant#VT_I4} denotes a four-byte integer
+            value, {@link Variant#VT_FILETIME} some DateTime and time (of a
+            file).
+            Please note that not all {@link Variant} types yet. This might Change
+            over time but largely depends on your feedback so that the POI team knows
+            which variant types are really needed. So please feel free To submit error
+            reports or patches for the types you need.
+            Microsoft documentation: 
+            <a href="http://msdn.microsoft.com/library/en-us/stg/stg/property_Set_display_name_dictionary.asp?frame=true">
+            Property Set Display Name Dictionary</a>
+            .
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @author Drew Varner (Drew.Varner InAndAround sc.edu)
+            @see Section
+            @see Variant
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Property.id">
+            The property's ID. 
+        </member>
+        <member name="F:NPOI.HPSF.Property.type">
+            The property's type. 
+        </member>
+        <member name="F:NPOI.HPSF.Property.value">
+            The property's value. 
+        </member>
+        <member name="M:NPOI.HPSF.Property.#ctor(System.Int64,System.Int64,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Property"/> class.
+            </summary>
+            <param name="id">the property's ID.</param>
+            <param name="type">the property's type, see {@link Variant}.</param>
+            <param name="value">the property's value. Only certain types are allowed, see
+            {@link Variant}.</param>
+        </member>
+        <member name="M:NPOI.HPSF.Property.#ctor(System.Int64,System.Byte[],System.Int64,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Property"/> class.
+            </summary>
+            <param name="id">The property's ID.</param>
+            <param name="src">The bytes the property Set stream consists of.</param>
+            <param name="offset">The property's type/value pair's offset in the
+            section.</param>
+            <param name="Length">The property's type/value pair's Length in bytes.</param>
+            <param name="codepage">The section's and thus the property's
+            codepage. It is needed only when Reading string values</param>
+        </member>
+        <member name="M:NPOI.HPSF.Property.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Property"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.Property.ReadDictionary(System.Byte[],System.Int64,System.Int32,System.Int32)">
+            <summary>
+            Reads the dictionary.
+            </summary>
+            <param name="src">The byte array containing the bytes making out the dictionary.</param>
+            <param name="offset">At this offset within src the dictionary starts.</param>
+            <param name="Length">The dictionary Contains at most this many bytes.</param>
+            <param name="codepage">The codepage of the string values.</param>
+            <returns>The dictonary</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Property.Equals(System.Object)">
+            <summary>
+            Compares two properties.
+            Please beware that a property with
+            ID == 0 is a special case: It does not have a type, and its value is the
+            section's dictionary. Another special case are strings: Two properties
+            may have the different types Variant.VT_LPSTR and Variant.VT_LPWSTR;
+            </summary>
+            <param name="o">The o.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.Property.TypesAreEqual(System.Int64,System.Int64)">
+            <summary>
+            Typeses the are equal.
+            </summary>
+            <param name="t1">The t1.</param>
+            <param name="t2">The t2.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.Property.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.Property.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.HPSF.Property.ID">
+             Returns the property's ID.
+            
+             @return The ID value
+        </member>
+        <member name="P:NPOI.HPSF.Property.Type">
+             Returns the property's type.
+            
+             @return The type value
+        </member>
+        <member name="P:NPOI.HPSF.Property.Value">
+            <summary>
+            Gets the property's value.
+            </summary>
+            <value>The property's value</value>
+        </member>
+        <member name="P:NPOI.HPSF.Property.Count">
+            <summary>
+            Gets the property's size in bytes. This is always a multiple of
+            4.
+            </summary>
+            <value>the property's size in bytes</value>
+        </member>
+        <member name="T:NPOI.HPSF.CustomProperty">
+            <summary>
+            This class represents custum properties in the document summary
+            information stream. The difference To normal properties is that custom
+            properties have an optional name. If the name is not <c>null</c> it
+            will be maintained in the section's dictionary.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2006-02-09
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.MutableProperty">
+            <summary>
+            Adds writing capability To the {@link Property} class.
+            Please be aware that this class' functionality will be merged into the
+            {@link Property} class at a later time, so the API will Change.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-08-03
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutableProperty.#ctor">
+            <summary>
+            Creates an empty property. It must be Filled using the Set method To
+            be usable.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutableProperty.#ctor(NPOI.HPSF.Property)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MutableProperty"/> class.
+            </summary>
+            <param name="p">The property To copy.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableProperty.Write(System.IO.Stream,System.Int32)">
+            <summary>
+            Writes the property To an output stream.
+            </summary>
+            <param name="out1">The output stream To Write To.</param>
+            <param name="codepage">The codepage To use for writing non-wide strings</param>
+            <returns>the number of bytes written To the stream</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperty.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.CustomProperty"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperty.#ctor(NPOI.HPSF.Property)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.CustomProperty"/> class.
+            </summary>
+            <param name="property">the property To copy</param>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperty.#ctor(NPOI.HPSF.Property,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.CustomProperty"/> class.
+            </summary>
+            <param name="property">This property's attributes are copied To the new custom
+            property.</param>
+            <param name="name">The new custom property's name.</param>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperty.EqualsContents(System.Object)">
+            <summary>
+            Compares two custom properties for equality. The method returns
+            <c>true</c> if all attributes of the two custom properties are
+            equal.
+            </summary>
+            <param name="o">The custom property To Compare with.</param>
+            <returns><c>true</c>
+             if both custom properties are equal, else
+            <c>false</c></returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperty.GetHashCode">
+            <summary>
+            </summary>
+            <returns></returns>
+            @see Object#GetHashCode()
+        </member>
+        <member name="P:NPOI.HPSF.CustomProperty.Name">
+            <summary>
+            Gets or sets the property's name.
+            </summary>
+            <value>the property's name.</value>
+        </member>
+        <member name="T:NPOI.HPSF.MarkUnsupportedException">
+            <summary>
+            This exception is thrown if an {@link java.io.InputStream} does
+            not support the {@link java.io.InputStream#mark} operation.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MarkUnsupportedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MarkUnsupportedException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MarkUnsupportedException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MarkUnsupportedException"/> class.
+            </summary>
+            <param name="msg">The exception's message string.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MarkUnsupportedException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MarkUnsupportedException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MarkUnsupportedException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MarkUnsupportedException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.Variant">
+            <summary>
+            The <em>Variant</em> types as defined by Microsoft's COM. I
+            found this information in <a href="http://www.marin.clara.net/COM/variant_type_definitions.htm">
+            http://www.marin.clara.net/COM/variant_type_definitions.htm</a>.
+            In the variant types descriptions the following shortcuts are
+            used: <strong> [V]</strong> - may appear in a VARIANT,
+            <strong>[T]</strong> - may appear in a TYPEDESC,
+            <strong>[P]</strong> - may appear in an OLE property Set,
+            <strong>[S]</strong> - may appear in a Safe Array.
+            @author Rainer Klute (klute@rainer-klute.de)
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_EMPTY">
+            [V][P] Nothing, i.e. not a single byte of data.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_NULL">
+            [V][P] SQL style Null.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_I2">
+            [V][T][P][S] 2 byte signed int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_I4">
+            [V][T][P][S] 4 byte signed int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_R4">
+            [V][T][P][S] 4 byte real.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_R8">
+            [V][T][P][S] 8 byte real.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_CY">
+            [V][T][P][S] currency. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_DATE">
+            [V][T][P][S] DateTime. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_BSTR">
+            [V][T][P][S] OLE Automation string. <span
+            style="background-color: #ffff00">How long is this? How is it
+            To be interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_DISPATCH">
+            [V][T][P][S] IDispatch *. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_ERROR">
+            [V][T][S] SCODE. <span style="background-color: #ffff00">How
+            long is this? How is it To be interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_BOOL">
+            [V][T][P][S] True=-1, False=0.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_VARIANT">
+            [V][T][P][S] VARIANT *. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UNKNOWN">
+            [V][T][S] IUnknown *. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_DECIMAL">
+            [V][T][S] 16 byte fixed point.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_I1">
+            [T] signed char.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UI1">
+            [V][T][P][S] unsigned char.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UI2">
+            [T][P] unsigned short.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UI4">
+            [T][P] unsigned int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_I8">
+            [T][P] signed 64-bit int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UI8">
+            [T][P] unsigned 64-bit int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_INT">
+            [T] signed machine int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_UINT">
+            [T] unsigned machine int.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_VOID">
+            [T] C style void.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_HRESULT">
+            [T] Standard return type. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_PTR">
+            [T] pointer type. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_SAFEARRAY">
+            [T] (use VT_ARRAY in VARIANT).
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_CARRAY">
+            [T] C style array. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_USERDEFINED">
+            [T] user defined type. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_LPSTR">
+            [T][P] null terminated string.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_LPWSTR">
+            [T][P] wide (Unicode) null terminated string.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_FILETIME">
+            [P] FILETIME. The FILETIME structure holds a DateTime and time
+            associated with a file. The structure identifies a 64-bit
+            integer specifying the number of 100-nanosecond intervals which
+            have passed since January 1, 1601. This 64-bit value is split
+            into the two dwords stored in the structure.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_BLOB">
+            [P] Length prefixed bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_STREAM">
+            [P] Name of the stream follows.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_STORAGE">
+            [P] Name of the storage follows.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_STREAMED_OBJECT">
+            [P] Stream Contains an object. <span
+            style="background-color: #ffff00"> How long is this? How is it
+            To be interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_STORED_OBJECT">
+            [P] Storage Contains an object. <span
+            style="background-color: #ffff00"> How long is this? How is it
+            To be interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_BLOB_OBJECT">
+            [P] Blob Contains an object. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_CF">
+            [P] Clipboard format. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_CLSID">
+             [P] A Class ID.
+            
+             It consists of a 32 bit unsigned integer indicating the size
+             of the structure, a 32 bit signed integer indicating (Clipboard
+             Format Tag) indicating the type of data that it Contains, and
+             then a byte array containing the data.
+            
+             The valid Clipboard Format Tags are:
+            
+             <ul>
+              <li>{@link Thumbnail#CFTAG_WINDOWS}</li>
+              <li>{@link Thumbnail#CFTAG_MACINTOSH}</li>
+              <li>{@link Thumbnail#CFTAG_NODATA}</li>
+              <li>{@link Thumbnail#CFTAG_FMTID}</li>
+             </ul>
+            
+             <pre>typedef struct tagCLIPDATA {
+             // cbSize is the size of the buffer pointed To
+             // by pClipData, plus sizeof(ulClipFmt)
+             ULONG              cbSize;
+             long               ulClipFmt;
+             BYTE*              pClipData;
+             } CLIPDATA;</pre>
+            
+             See <a
+             href="msdn.microsoft.com/library/en-us/com/stgrstrc_0uwk.asp"
+             tarGet="_blank">
+             msdn.microsoft.com/library/en-us/com/stgrstrc_0uwk.asp</a>.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_VECTOR">
+            [P] simple counted array. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_ARRAY">
+            [V] SAFEARRAY*. <span style="background-color: #ffff00">How
+            long is this? How is it To be interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_BYREF">
+            [V] void* for local use. <span style="background-color:
+            #ffff00">How long is this? How is it To be
+            interpreted?</span>
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_RESERVED">
+            FIXME (3): Document this!
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_ILLEGAL">
+            FIXME (3): Document this!
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_ILLEGALMASKED">
+            FIXME (3): Document this!
+        </member>
+        <member name="F:NPOI.HPSF.Variant.VT_TYPEMASK">
+            FIXME (3): Document this!
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_UNKNOWN">
+            Denotes a variant type with a Length that is unknown To HPSF yet.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_VARIABLE">
+            Denotes a variant type with a variable Length.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_0">
+            Denotes a variant type with a Length of 0 bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_2">
+            Denotes a variant type with a Length of 2 bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_4">
+            Denotes a variant type with a Length of 4 bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.Length_8">
+            Denotes a variant type with a Length of 8 bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Variant.numberToName">
+            Maps the numbers denoting the variant types To their corresponding
+            variant type names.
+        </member>
+        <member name="M:NPOI.HPSF.Variant.GetVariantName(System.Int64)">
+            <summary>
+            Returns the variant type name associated with a variant type
+            number.
+            </summary>
+            <param name="variantType">The variant type number.</param>
+            <returns>The variant type name or the string "unknown variant type"</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Variant.GetVariantLength(System.Int64)">
+            <summary>
+            Returns a variant type's Length.
+            </summary>
+            <param name="variantType">The variant type number.</param>
+            <returns>The Length of the variant type's data in bytes. If the Length Is
+            variable, i.e. the Length of a string, -1 is returned. If HPSF does not
+            know the Length, -2 is returned. The latter usually indicates an
+            unsupported variant type.</returns>
+        </member>
+        <member name="T:NPOI.HPSF.DocumentSummaryInformation">
+            <summary>
+            Convenience class representing a DocumentSummary Information stream in a
+            Microsoft Office document.
+            @author Rainer Klute 
+            klute@rainer-klute.de
+            @author Drew Varner (Drew.Varner cloSeto sc.edu)
+            @author robert_flaherty@hyperion.com
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.SpecialPropertySet">
+            <summary>
+            Abstract superclass for the convenience classes {@link
+            SummaryInformation} and {@link DocumentSummaryInformation}.
+            The motivation behind this class is quite nasty if you look
+            behind the scenes, but it serves the application programmer well by
+            providing him with the easy-to-use {@link SummaryInformation} and
+            {@link DocumentSummaryInformation} classes. When parsing the data a
+            property Set stream consists of (possibly coming from an {@link
+            java.io.Stream}) we want To Read and process each byte only
+            once. Since we don't know in advance which kind of property Set we
+            have, we can expect only the most general {@link
+            PropertySet}. Creating a special subclass should be as easy as
+            calling the special subclass' constructor and pass the general
+            {@link PropertySet} in. To make things easy internally, the special
+            class just holds a reference To the general {@link PropertySet} and
+            delegates all method calls To it.
+            A cleaner implementation would have been like this: The {@link
+            PropertySetFactory} parses the stream data into some internal
+            object first.  Then it Finds out whether the stream is a {@link
+            SummaryInformation}, a {@link DocumentSummaryInformation} or a
+            general {@link PropertySet}.  However, the current implementation
+            went the other way round historically: the convenience classes came
+            only late To my mind.
+            @author Rainer Klute 
+            klute@rainer-klute.de
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.SpecialPropertySet.delegate1">
+            The "real" property Set <c>SpecialPropertySet</c>
+            delegates To.
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.#ctor(NPOI.HPSF.PropertySet)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.SpecialPropertySet"/> class.
+            </summary>
+            <param name="ps">The property Set To be encapsulated by the <c>SpecialPropertySet</c></param>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.#ctor(NPOI.HPSF.MutablePropertySet)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.SpecialPropertySet"/> class.
+            </summary>
+            <param name="ps">The mutable property Set To be encapsulated by the <c>SpecialPropertySet</c></param>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.AddSection(NPOI.HPSF.Section)">
+            <summary>
+            Adds a section To this property set.
+            </summary>
+            <param name="section">The {@link Section} To Add. It will be Appended
+            after any sections that are alReady present in the property Set
+            and thus become the last section.</param>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.ClearSections">
+            <summary>
+            Removes all sections from this property Set.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.GetStream">
+            <summary>
+            Returns the contents of this property Set stream as an input stream.
+            The latter can be used for example To Write the property Set into a POIFS
+            document. The input stream represents a snapshot of the property Set.
+            If the latter is modified while the input stream is still being
+            Read, the modifications will not be reflected in the input stream but in
+            the {@link MutablePropertySet} only.
+            </summary>
+            <returns>the contents of this PropertySet stream</returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.Write(NPOI.POIFS.FileSystem.DirectoryEntry,System.String)">
+            <summary>
+            Writes a property Set To a document in a POI filesystem directory.
+            </summary>
+            <param name="dir">The directory in the POI filesystem To Write the document To</param>
+            <param name="name">The document's name. If there is alReady a document with the
+            same name in the directory the latter will be overwritten.</param>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.Write(System.IO.Stream)">
+            <summary>
+            Writes the property Set To an output stream.
+            </summary>
+            <param name="out1">the output stream To Write the section To</param>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.Equals(System.Object)">
+            <summary>
+            Returns <c>true</c> if the <c>PropertySet</c> is equal
+            To the specified parameter, else <c>false</c>.
+            </summary>
+            <param name="o">the object To Compare this
+            <c>PropertySet</c>
+            with</param>
+            <returns>
+            	<c>true</c>
+            if the objects are equal,
+            <c>false</c>
+            if not
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.GetProperty(System.Int32)">
+            <summary>
+            Convenience method returning the value of the property with
+            the specified ID. If the property is not available,
+            <c>null</c> is returned and a subsequent call To {@link
+            #WasNull} will return <c>true</c> .
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The property value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.GetPropertyBooleanValue(System.Int32)">
+            <summary>
+            Convenience method returning the value of a bool property
+            with the specified ID. If the property is not available,
+            <c>false</c> is returned. A subsequent call To {@link
+            #WasNull} will return <c>true</c> To let the caller
+            distinguish that case from a real property value of
+            <c>false</c>.
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The property value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.GetPropertyIntValue(System.Int32)">
+            <summary>
+            Convenience method returning the value of the numeric
+            property with the specified ID. If the property is not
+            available, 0 is returned. A subsequent call To {@link #WasNull}
+            will return <c>true</c> To let the caller distinguish
+            that case from a real property value of 0.
+            </summary>
+            <param name="id">The property ID</param>
+            <returns>The propertyIntValue value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.SpecialPropertySet.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.PropertySetIDMap">
+            The id to name mapping of the properties
+             in this set.
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.ByteOrder">
+            <summary>
+            gets or sets the "byteOrder" property.
+            </summary>
+            <value>the byteOrder value To Set</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.Format">
+            <summary>
+            gets or sets the "format" property
+            </summary>
+            <value>the format value To Set</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.ClassID">
+            <summary>
+            gets or sets the property Set stream's low-level "class ID"
+            field.
+            </summary>
+            <value>The property Set stream's low-level "class ID" field</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.SectionCount">
+            <summary>
+            Returns the number of {@link Section}s in the property
+            Set.
+            </summary>
+            <value>The number of {@link Section}s in the property Set.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.IsSummaryInformation">
+            <summary>
+            Checks whether this {@link PropertySet} represents a Summary
+            Information.
+            </summary>
+            <value>
+            	<c>true</c> Checks whether this {@link PropertySet} represents a Summary
+            Information; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.IsDocumentSummaryInformation">
+            <summary>
+            Gets a value indicating whether this instance is document summary information.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is document summary information; otherwise, <c>false</c>.
+            </value>
+            Checks whether this {@link PropertySet} is a Document
+            Summary Information.
+            @return
+            <c>true</c>
+            if this {@link PropertySet}
+            represents a Document Summary Information, else
+            <c>false</c>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.FirstSection">
+            <summary>
+            Gets the PropertySet's first section.
+            </summary>
+            <value>The {@link PropertySet}'s first section.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.OSVersion">
+            <summary>
+            gets or sets the "osVersion" property
+            </summary>
+            <value> the osVersion value To Set</value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.Properties">
+            <summary>
+            Convenience method returning the {@link Property} array
+            contained in this property Set. It is a shortcut for Getting
+            the {@link PropertySet}'s {@link Section}s list and then
+            Getting the {@link Property} array from the first {@link
+            Section}.
+            </summary>
+            <value>
+            The properties of the only {@link Section} of this
+            {@link PropertySet}.
+            </value>
+        </member>
+        <member name="P:NPOI.HPSF.SpecialPropertySet.WasNull">
+            <summary>
+            Checks whether the property which the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access
+            Was available or not. This information might be important for
+            callers of {@link #GetPropertyIntValue} since the latter
+            returns 0 if the property does not exist. Using {@link
+            #WasNull}, the caller can distiguish this case from a
+            property's real value of 0.
+            </summary>
+            <value>
+            	<c>true</c> if the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access a
+            property that Was not available; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="F:NPOI.HPSF.DocumentSummaryInformation.DEFAULT_STREAM_NAME">
+            The document name a document summary information stream
+            usually has in a POIFS filesystem.
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.#ctor(NPOI.HPSF.PropertySet)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.DocumentSummaryInformation"/> class.
+            </summary>
+            <param name="ps">A property Set which should be Created from a
+            document summary information stream.</param>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveCategory">
+            <summary>
+            Removes the category.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemovePresentationFormat">
+            <summary>
+            Removes the presentation format.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveByteCount">
+            <summary>
+            Removes the byte count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveLineCount">
+            <summary>
+            Removes the line count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveParCount">
+            <summary>
+            Removes the par count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveSlideCount">
+            <summary>
+            Removes the slide count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveNoteCount">
+            <summary>
+            Removes the note count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveHiddenCount">
+            <summary>
+            Removes the hidden count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveMMClipCount">
+            <summary>
+            Removes the MMClip count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveScale">
+            <summary>
+            Removes the scale.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveHeadingPair">
+            <summary>
+            Removes the heading pair.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveDocparts">
+            <summary>
+            Removes the doc parts.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveManager">
+            <summary>
+            Removes the manager.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveCompany">
+            <summary>
+            Removes the company.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveLinksDirty">
+            <summary>
+            Removes the links dirty.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.EnsureSection2">
+            <summary>
+            Creates section 2 if it is not alReady present.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.DocumentSummaryInformation.RemoveCustomProperties">
+            <summary>
+            Removes the custom properties.
+            </summary>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.Category">
+            <summary>
+            Gets or sets the category.
+            </summary>
+            <value>The category value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.PresentationFormat">
+            <summary>
+            Gets or sets the presentation format (or null).
+            </summary>
+            <value>The presentation format value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.ByteCount">
+            <summary>
+            Gets or sets the byte count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a byte count.
+            </summary>
+            <value>The byteCount value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.LineCount">
+            <summary>
+            Gets or sets the line count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a line count.
+            </summary>
+            <value>The line count value.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.ParCount">
+            <summary>
+            Gets or sets the par count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a par count.
+            </summary>
+            <value>The par count value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.SlideCount">
+            <summary>
+            Gets or sets the slide count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a slide count.
+            </summary>
+            <value>The slide count value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.NoteCount">
+            <summary>
+            Gets or sets the note count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a note count
+            </summary>
+            <value>The note count value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.HiddenCount">
+            <summary>
+            Gets or sets the hidden count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a hidden
+            count.
+            </summary>
+            <value>The hidden count value.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.MMClipCount">
+            <summary>
+            Returns the mmclip count or 0 if the {@link
+            DocumentSummaryInformation} does not contain a mmclip
+            count.
+            </summary>
+            <value>The mmclip count value.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.Scale">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:NPOI.HPSF.DocumentSummaryInformation"/> is scale.
+            </summary>
+            <value><c>true</c> if cropping is desired; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.HeadingPair">
+            <summary>
+            Gets or sets the heading pair (or null)
+            </summary>
+            <value>The heading pair value.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.Docparts">
+            <summary>
+            Gets or sets the doc parts.
+            </summary>
+            <value>The doc parts value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.Manager">
+            <summary>
+            Gets or sets the manager (or <c>null</c>).
+            </summary>
+            <value>The manager value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.Company">
+            <summary>
+            Gets or sets the company (or <c>null</c>).
+            </summary>
+            <value>The company value</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.LinksDirty">
+            <summary>
+            Gets or sets a value indicating whether [links dirty].
+            </summary>
+            <value><c>true</c> if the custom links are dirty.; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:NPOI.HPSF.DocumentSummaryInformation.CustomProperties">
+            <summary>
+            Gets or sets the custom properties.
+            </summary>
+            <value>The custom properties.</value>
+        </member>
+        <member name="T:NPOI.HPSF.UnexpectedPropertySetTypeException">
+            <summary>
+            This exception is thrown if a certain type of property Set Is
+            expected (e.g. a Document Summary Information) but the provided
+            property Set is not of that type.
+            The constructors of this class are analogous To those of its
+            superclass and documented there.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09 
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.UnexpectedPropertySetTypeException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.UnexpectedPropertySetTypeException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.UnexpectedPropertySetTypeException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.UnexpectedPropertySetTypeException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+        </member>
+        <member name="M:NPOI.HPSF.UnexpectedPropertySetTypeException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.UnexpectedPropertySetTypeException"/> class.
+            </summary>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="M:NPOI.HPSF.UnexpectedPropertySetTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.UnexpectedPropertySetTypeException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="T:NPOI.HPSF.MissingSectionException">
+            <summary>
+            This exception is thrown if one of the {@link PropertySet}'s
+            convenience methods does not Find a required {@link Section}.
+            The constructors of this class are analogous To those of its
+            superclass and documented there.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2006-02-08
+            </summary>
+        </member>
+        <member name="T:NPOI.HPSF.HPSFRuntimeException">
+            <summary>
+            This exception is the superclass of all other unchecked
+            exceptions thrown in this package. It supports a nested "reason"
+            throwable, i.e. an exception that caused this one To be thrown.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFRuntimeException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFRuntimeException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFRuntimeException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFRuntimeException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFRuntimeException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFRuntimeException"/> class.
+            </summary>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="M:NPOI.HPSF.HPSFRuntimeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.HPSFRuntimeException"/> class.
+            </summary>
+            <param name="msg">The message string.</param>
+            <param name="reason">The reason, i.e. a throwable that indirectly
+            caused this exception.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MissingSectionException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MissingSectionException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MissingSectionException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MissingSectionException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.MissingSectionException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MissingSectionException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MissingSectionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MissingSectionException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.NoSingleSectionException">
+            <summary>
+            This exception is thrown if one of the {@link PropertySet}'s
+            convenience methods that require a single {@link Section} is called
+            and the {@link PropertySet} does not contain exactly one {@link
+            Section}.
+            The constructors of this class are analogous To those of its
+            superclass and documented there.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoSingleSectionException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoSingleSectionException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoSingleSectionException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoSingleSectionException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoSingleSectionException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoSingleSectionException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoSingleSectionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoSingleSectionException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.IllegalVariantTypeException">
+            <summary>
+            This exception is thrown if HPSF encounters a variant type that is illegal
+            in the current context.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2004-06-21
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalVariantTypeException.#ctor(System.Int64,System.Object,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalVariantTypeException"/> class.
+            </summary>
+            <param name="variantType">The unsupported variant type</param>
+            <param name="value">The value</param>
+            <param name="msg">A message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalVariantTypeException.#ctor(System.Int64,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalVariantTypeException"/> class.
+            </summary>
+            <param name="variantType">The unsupported variant type</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="T:NPOI.HPSF.VariantSupport">
+            <summary>
+            Supports Reading and writing of variant data.
+            <strong>FIXME (3):</strong>
+             Reading and writing should be made more
+            uniform than it is now. The following items should be resolved:
+            Reading requires a Length parameter that is 4 byte greater than the
+            actual data, because the variant type field is included.
+            Reading Reads from a byte array while writing Writes To an byte array
+            output stream.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-08-08
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.VariantSupport.unsupportedMessage">
+            Keeps a list of the variant types an "unsupported" message has alReady
+            been issued for.
+        </member>
+        <member name="M:NPOI.HPSF.VariantSupport.WriteUnsupportedTypeMessage(NPOI.HPSF.UnsupportedVariantTypeException)">
+            <summary>
+            Writes a warning To System.err that a variant type Is
+            unsupported by HPSF. Such a warning is written only once for each variant
+            type. Log messages can be turned on or off by
+            </summary>
+            <param name="ex">The exception To log</param>
+        </member>
+        <member name="F:NPOI.HPSF.VariantSupport.SUPPORTED_TYPES">
+            HPSF is able To Read these {@link Variant} types.
+        </member>
+        <member name="M:NPOI.HPSF.VariantSupport.IsSupportedType(System.Int32)">
+            <summary>
+            Checks whether HPSF supports the specified variant type. Unsupported
+            types should be implemented included in the {@link #SUPPORTED_TYPES}
+            array.
+            </summary>
+            <param name="variantType">the variant type To check</param>
+            <returns>
+            	<c>true</c> if HPFS supports this type,otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.VariantSupport.Read(System.Byte[],System.Int32,System.Int32,System.Int64,System.Int32)">
+            <summary>
+            Reads a variant type from a byte array
+            </summary>
+            <param name="src">The byte array</param>
+            <param name="offset">The offset in the byte array where the variant starts</param>
+            <param name="Length">The Length of the variant including the variant type field</param>
+            <param name="type">The variant type To Read</param>
+            <param name="codepage">The codepage To use for non-wide strings</param>
+            <returns>A Java object that corresponds best To the variant field. For
+            example, a VT_I4 is returned as a {@link long}, a VT_LPSTR as a
+            {@link String}.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.VariantSupport.Write(System.IO.Stream,System.Int64,System.Object,System.Int32)">
+            <summary>
+            Writes a variant value To an output stream. This method ensures that
+            always a multiple of 4 bytes is written.
+            If the codepage is UTF-16, which is encouraged, strings
+            <strong>must</strong> always be written as {@link Variant#VT_LPWSTR}
+            strings, not as {@link Variant#VT_LPSTR} strings. This method ensure this
+            by Converting strings appropriately, if needed.
+            </summary>
+            <param name="out1">The stream To Write the value To.</param>
+            <param name="type">The variant's type.</param>
+            <param name="value">The variant's value.</param>
+            <param name="codepage">The codepage To use To Write non-wide strings</param>
+            <returns>The number of entities that have been written. In many cases an
+            "entity" is a byte but this is not always the case.</returns>
+        </member>
+        <member name="P:NPOI.HPSF.VariantSupport.IsLogUnsupportedTypes">
+            <summary>
+            Checks whether logging of unsupported variant types warning is turned
+            on or off.
+            </summary>
+            <value>
+            	<c>true</c> if logging is turned on; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:NPOI.HPSF.ReadingNotSupportedException">
+            <summary>
+            This exception is thrown when HPSF tries To Read a (yet) unsupported
+            variant type.
+            @see WritingNotSupportedException
+            @see UnsupportedVariantTypeException
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-08-08
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.ReadingNotSupportedException.#ctor(System.Int64,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.ReadingNotSupportedException"/> class.
+            </summary>
+            <param name="variantType">The unsupported variant type</param>
+            <param name="value">The value who's variant type is not yet supported</param>
+        </member>
+        <member name="T:NPOI.HPSF.Wellknown.SectionIDMap">
+            <summary>
+            Maps section format IDs To {@link PropertyIDMap}s. It Is
+            initialized with two well-known section format IDs: those of the
+            <tt>\005SummaryInformation</tt> stream and the
+            <tt>\005DocumentSummaryInformation</tt> stream.
+            If you have a section format ID you can use it as a key To query
+            this map.  If you Get a {@link PropertyIDMap} returned your section
+            is well-known and you can query the {@link PropertyIDMap} for PID
+            strings. If you Get back <c>null</c> you are on your own.
+            This {@link java.util.Map} expects the byte arrays of section format IDs
+            as keys. A key maps To a {@link PropertyIDMap} describing the
+            property IDs in sections with the specified section format ID.
+            @author Rainer Klute (klute@rainer-klute.de)
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.SectionIDMap.SUMMARY_INFORMATION_ID">
+            The SummaryInformation's section's format ID.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID1">
+            The DocumentSummaryInformation's first and second sections' format
+            ID.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.SectionIDMap.UNDEFINED">
+            A property without a known name is described by this string. 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.SectionIDMap.defaultMap">
+            The default section ID map. It maps section format IDs To
+            {@link PropertyIDMap}s.
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.GetInstance">
+            <summary>
+            Returns the singleton instance of the default {@link
+            SectionIDMap}.
+            </summary>
+            <returns>The instance value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.GetPIDString(System.Byte[],System.Int64)">
+            <summary>
+            Returns the property ID string that is associated with a
+            given property ID in a section format ID's namespace.
+            </summary>
+            <param name="sectionFormatID">Each section format ID has its own name
+            space of property ID strings and thus must be specified.</param>
+            <param name="pid">The property ID</param>
+            <returns>The well-known property ID string associated with the
+            property ID pid in the name space spanned by sectionFormatID If the pid
+            sectionFormatID combination is not well-known, the
+            string "[undefined]" is returned.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.Get(System.Byte[])">
+            <summary>
+            Returns the {@link PropertyIDMap} for a given section format
+            ID.
+            </summary>
+            <param name="sectionFormatID">The section format ID.</param>
+            <returns>the property ID map</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.Get(System.Object)">
+            <summary>
+            Returns the {@link PropertyIDMap} for a given section format
+            ID.
+            </summary>
+            <param name="sectionFormatID">A section format ID as a 
+            <tt>byte[]</tt></param>
+            <returns>the property ID map</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.Put(System.Byte[],NPOI.HPSF.Wellknown.PropertyIDMap)">
+            <summary>
+            Associates a section format ID with a {@link
+            PropertyIDMap}.
+            </summary>
+            <param name="sectionFormatID">the section format ID</param>
+            <param name="propertyIDMap">The property ID map.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.SectionIDMap.Put(System.Object,System.Object)">
+            <summary>
+            Puts the specified key.
+            </summary>
+            <param name="key">This parameter remains undocumented since the method Is
+            deprecated.</param>
+            <param name="value">This parameter remains undocumented since the method Is
+            deprecated.</param>
+            <returns>The return value remains undocumented since the method Is
+            deprecated.</returns>
+        </member>
+        <member name="T:NPOI.HPSF.Section">
+            <summary>
+            Represents a section in a {@link PropertySet}.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @author Drew Varner (Drew.Varner allUpIn sc.edu)
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Section.dictionary">
+            Maps property IDs To section-private PID strings. These
+            strings can be found in the property with ID 0.
+        </member>
+        <member name="F:NPOI.HPSF.Section.formatID">
+            The section's format ID, {@link #GetFormatID}.
+        </member>
+        <member name="M:NPOI.HPSF.Section.#ctor">
+            <summary>
+            Creates an empty and uninitialized {@link Section}.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.Section.#ctor(System.Byte[],System.Int32)">
+            <summary>
+            Creates a {@link Section} instance from a byte array.
+            </summary>
+            <param name="src">Contains the complete property Set stream.</param>
+            <param name="offset">The position in the stream that points To the
+            section's format ID.</param>
+        </member>
+        <member name="M:NPOI.HPSF.Section.GetProperty(System.Int64)">
+             Returns the value of the property with the specified ID. If
+             the property is not available, <c>null</c> is returned
+             and a subsequent call To {@link #wasNull} will return
+             <c>true</c>.
+            
+             @param id The property's ID
+            
+             @return The property's value
+        </member>
+        <member name="M:NPOI.HPSF.Section.GetPropertyIntValue(System.Int64)">
+             Returns the value of the numeric property with the specified
+             ID. If the property is not available, 0 is returned. A
+             subsequent call To {@link #wasNull} will return
+             <c>true</c> To let the caller distinguish that case from
+             a real property value of 0.
+            
+             @param id The property's ID
+            
+             @return The property's value
+        </member>
+        <member name="M:NPOI.HPSF.Section.GetPropertyBooleanValue(System.Int32)">
+             Returns the value of the bool property with the specified
+             ID. If the property is not available, <c>false</c> Is
+             returned. A subsequent call To {@link #wasNull} will return
+             <c>true</c> To let the caller distinguish that case from
+             a real property value of <c>false</c>.
+            
+             @param id The property's ID
+            
+             @return The property's value
+        </member>
+        <member name="F:NPOI.HPSF.Section.wasNull">
+            This member is <c>true</c> if the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access a
+            property that was not available, else <c>false</c>.
+        </member>
+        <member name="M:NPOI.HPSF.Section.GetPIDString(System.Int64)">
+            <summary>
+            Returns the PID string associated with a property ID. The ID
+            is first looked up in the {@link Section}'s private
+            dictionary. If it is not found there, the method calls {@link
+            SectionIDMap#GetPIDString}.
+            </summary>
+            <param name="pid">The property ID.</param>
+            <returns>The property ID's string value</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Section.Equals(System.Object)">
+            Checks whether this section is equal To another object. The result Is
+            <c>false</c> if one of the the following conditions holds:
+            
+            <ul>
+            
+            <li>The other object is not a {@link Section}.</li>
+            
+            <li>The format IDs of the two sections are not equal.</li>
+              
+            <li>The sections have a different number of properties. However,
+            properties with ID 1 (codepage) are not counted.</li>
+            
+            <li>The other object is not a {@link Section}.</li>
+            
+            <li>The properties have different values. The order of the properties
+            is irrelevant.</li>
+            
+            </ul>
+            
+            @param o The object To Compare this section with
+            @return <c>true</c> if the objects are equal, <c>false</c> if
+            not
+        </member>
+        <member name="M:NPOI.HPSF.Section.Remove(NPOI.HPSF.Property[],System.Int32)">
+            <summary>
+            Removes a field from a property array. The resulting array Is
+            compactified and returned.
+            </summary>
+            <param name="pa">The property array.</param>
+            <param name="i">The index of the field To be Removed.</param>
+            <returns>the compactified array.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Section.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.HPSF.Section.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.HPSF.Section.FormatID">
+            <summary>
+            Returns the format ID. The format ID is the "type" of the
+            section. For example, if the format ID of the first {@link
+            Section} Contains the bytes specified by 
+            <c>org.apache.poi.hpsf.wellknown.SectionIDMap.SUMMARY_INFORMATION_ID</c>
+            the section (and thus the property Set) is a SummaryInformation.
+            </summary>
+            <value>The format ID.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.OffSet">
+            <summary>
+            Gets the offset of the section in the stream.
+            </summary>
+            <value>The offset of the section in the stream</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.Size">
+            <summary>
+            Returns the section's size in bytes.
+            </summary>
+            <value>The section's size in bytes.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.PropertyCount">
+            <summary>
+            Returns the number of properties in this section.
+            </summary>
+            <value>The number of properties in this section.</value> 
+        </member>
+        <member name="P:NPOI.HPSF.Section.Properties">
+            <summary>
+            Returns this section's properties.
+            </summary>
+            <value>This section's properties.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.WasNull">
+            <summary>
+            Checks whether the property which the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access
+            was available or not. This information might be important for
+            callers of {@link #GetPropertyIntValue} since the latter
+            returns 0 if the property does not exist. Using {@link
+            #wasNull} the caller can distiguish this case from a property's
+            real value of 0.
+            </summary>
+            <value><c>true</c> if the last call To {@link
+            #GetPropertyIntValue} or {@link #GetProperty} tried To access a
+            property that was not available; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.Dictionary">
+            <summary>
+            Gets the section's dictionary. A dictionary allows an application To
+            use human-Readable property names instead of numeric property IDs. It
+            Contains mappings from property IDs To their associated string
+            values. The dictionary is stored as the property with ID 0. The codepage
+            for the strings in the dictionary is defined by property with ID 1.
+            </summary>
+            <value>the dictionary or null
+             if the section does not have
+            a dictionary.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Section.Codepage">
+            <summary>
+            Gets the section's codepage, if any.
+            </summary>
+            <value>The section's codepage if one is defined, else -1.</value>
+        </member>
+        <member name="T:NPOI.HPSF.Section.PropertyListEntry">
+            Represents an entry in the property list and holds a property's ID and
+            its offset from the section's beginning.
+        </member>
+        <member name="M:NPOI.HPSF.Section.PropertyListEntry.CompareTo(System.Object)">
+             Compares this {@link PropertyListEntry} with another one by their
+             offsets. A {@link PropertyListEntry} is "smaller" than another one if
+             its offset from the section's begin is smaller.
+            
+             @see Comparable#CompareTo(java.lang.Object)
+        </member>
+        <member name="T:NPOI.HPSF.NoPropertySetStreamException">
+            <summary>
+            This exception is thrown if a format error in a property Set stream Is
+            detected or when the input data do not constitute a property Set stream.
+            The constructors of this class are analogous To those of its superclass
+            and are documented there.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoPropertySetStreamException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoPropertySetStreamException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoPropertySetStreamException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoPropertySetStreamException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoPropertySetStreamException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoPropertySetStreamException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoPropertySetStreamException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoPropertySetStreamException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.MutableSection">
+            <summary>
+            Adds writing capability To the {@link Section} class.
+            Please be aware that this class' functionality will be merged into the
+            {@link Section} class at a later time, so the API will Change.
+            @since 2002-02-20
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.MutableSection.dirty">
+            If the "dirty" flag is true, the section's size must be
+            (re-)calculated before the section is written.
+        </member>
+        <member name="F:NPOI.HPSF.MutableSection.preprops">
+            List To assemble the properties. Unfortunately a wrong
+            decision has been taken when specifying the "properties" field
+            as an Property[]. It should have been a {@link java.util.List}.
+        </member>
+        <member name="F:NPOI.HPSF.MutableSection.sectionBytes">
+            Contains the bytes making out the section. This byte array is
+            established when the section's size is calculated and can be reused
+            later. It is valid only if the "dirty" flag is false.
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.MutableSection"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.#ctor(NPOI.HPSF.Section)">
+            <summary>
+            Constructs a <c>MutableSection</c> by doing a deep copy of an
+            existing <c>Section</c>. All nested <c>Property</c>
+            instances, will be their mutable counterparts in the new
+            <c>MutableSection</c>.
+            </summary>
+            <param name="s">The section Set To copy</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetFormatID(NPOI.Util.ClassID)">
+            <summary>
+            Sets the section's format ID.
+            </summary>
+            <param name="formatID">The section's format ID</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetFormatID(System.Byte[])">
+            <summary>
+            Sets the section's format ID.
+            </summary>
+            <param name="formatID">The section's format ID as a byte array. It components
+            are in big-endian format.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperties(NPOI.HPSF.Property[])">
+            <summary>
+            Sets this section's properties. Any former values are overwritten.
+            </summary>
+            <param name="properties">This section's new properties.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.String)">
+            <summary>
+            Sets the string value of the property with the specified ID.
+            </summary>
+            <param name="id">The property's ID</param>
+            <param name="value">The property's value. It will be written as a Unicode
+            string.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.Int32)">
+            <summary>
+            Sets the int value of the property with the specified ID.
+            </summary>
+            <param name="id">The property's ID</param>
+            <param name="value">The property's value.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.Int64)">
+            <summary>
+            Sets the long value of the property with the specified ID.
+            </summary>
+            <param name="id">The property's ID</param>
+            <param name="value">The property's value.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.Boolean)">
+            <summary>
+            Sets the bool value of the property with the specified ID.
+            </summary>
+            <param name="id">The property's ID</param>
+            <param name="value">The property's value.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.Int64,System.Object)">
+            <summary>
+            Sets the value and the variant type of the property with the
+            specified ID. If a property with this ID is not yet present in
+            the section, it will be Added. An alReady present property with
+            the specified ID will be overwritten. A default mapping will be
+            used To choose the property's type.
+            </summary>
+            <param name="id">The property's ID.</param>
+            <param name="variantType">The property's variant type.</param>
+            <param name="value">The property's value.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(NPOI.HPSF.Property)">
+            <summary>
+            Sets the property.
+            </summary>
+            <param name="p">The property To be Set.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.RemoveProperty(System.Int64)">
+            <summary>
+            Removes the property.
+            </summary>
+            <param name="id">The ID of the property To be Removed</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetPropertyBooleanValue(System.Int32,System.Boolean)">
+            <summary>
+            Sets the value of the bool property with the specified
+            ID.
+            </summary>
+            <param name="id">The property's ID</param>
+            <param name="value">The property's value</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.CalcSize">
+            <summary>
+            Calculates the section's size. It is the sum of the Lengths of the
+            section's header (8), the properties list (16 times the number of
+            properties) and the properties themselves.
+            </summary>
+            <returns>the section's Length in bytes.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.Write(System.IO.Stream)">
+            <summary>
+            Writes this section into an output stream.
+            Internally this is done by writing into three byte array output
+            streams: one for the properties, one for the property list and one for
+            the section as such. The two former are Appended To the latter when they
+            have received all their data.
+            </summary>
+            <param name="out1">The stream To Write into.</param>
+            <returns>The number of bytes written, i.e. the section's size.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.WriteDictionary(System.IO.Stream,System.Collections.IDictionary,System.Int32)">
+            <summary>
+            Writes the section's dictionary
+            </summary>
+            <param name="out1">The output stream To Write To.</param>
+            <param name="dictionary">The dictionary.</param>
+            <param name="codepage">The codepage To be used To Write the dictionary items.</param>
+            <returns>The number of bytes written</returns>
+            <remarks>
+            see MSDN KB: http://msdn.microsoft.com/en-us/library/aa380065(VS.85).aspx
+            </remarks>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.EnsureProperties">
+            <summary>
+            Ensures the properties.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.GetProperty(System.Int64)">
+            <summary>
+            Gets a property.
+            </summary>
+            <param name="id">The ID of the property To Get</param>
+            <returns>The property or null  if there is no such property</returns>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.SetProperty(System.Int32,System.Object)">
+            <summary>
+            Sets the property.
+            </summary>
+            <param name="id">The property ID.</param>
+            <param name="value">The property's value. The value's class must be one of those
+            supported by HPSF.</param>
+        </member>
+        <member name="M:NPOI.HPSF.MutableSection.Clear">
+            <summary>
+            Removes all properties from the section including 0 (dictionary) and
+            1 (codepage).
+            </summary>
+        </member>
+        <member name="P:NPOI.HPSF.MutableSection.Size">
+            <summary>
+            Returns the section's size in bytes.
+            </summary>
+            <value>The section's size in bytes.</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutableSection.PropertyCount">
+            <summary>
+            OverWrites the base class' method To cope with a redundancy:
+            the property count is maintained in a separate member variable, but
+            shouldn't.
+            </summary>
+            <value>The number of properties in this section.</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutableSection.Properties">
+            <summary>
+            Returns this section's properties.
+            </summary>
+            <value>This section's properties.</value>
+        </member>
+        <member name="P:NPOI.HPSF.MutableSection.Dictionary">
+            <summary>
+            Sets the section's dictionary. All keys in the dictionary must be
+            {@link java.lang.long} instances, all values must be
+            {@link java.lang.String}s. This method overWrites the properties with IDs
+            0 and 1 since they are reserved for the dictionary and the dictionary's
+            codepage. Setting these properties explicitly might have surprising
+            effects. An application should never do this but always use this
+            method.
+            </summary>
+            <value>
+            the dictionary
+            </value>
+        </member>
+        <member name="P:NPOI.HPSF.MutableSection.Codepage">
+            <summary>
+            Gets the section's codepage, if any.
+            </summary>
+            <value>The section's codepage if one is defined, else -1.</value>
+        </member>
+        <member name="T:NPOI.HPSF.CustomProperties">
+            <summary>
+            Maintains the instances of {@link CustomProperty} that belong To a
+            {@link DocumentSummaryInformation}. The class maintains the names of the
+            custom properties in a dictionary. It implements the {@link Map} interface
+            and by this provides a simplified view on custom properties: A property's
+            name is the key that maps To a typed value. This implementation hides
+            property IDs from the developer and regards the property names as keys To
+            typed values.
+            While this class provides a simple API To custom properties, it ignores
+            the fact that not names, but IDs are the real keys To properties. Under the
+            hood this class maintains a 1:1 relationship between IDs and names. Therefore
+            you should not use this class To process property Sets with several IDs
+            mapping To the same name or with properties without a name: the result will
+            contain only a subSet of the original properties. If you really need To deal
+            such property Sets, use HPSF's low-level access methods.
+            An application can call the {@link #isPure} method To check whether a
+            property Set parsed by {@link CustomProperties} is still pure (i.e.
+            unmodified) or whether one or more properties have been dropped.
+            This class is not thRead-safe; concurrent access To instances of this
+            class must be syncronized.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2006-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.CustomProperties.dictionaryIDToName">
+            Maps property IDs To property names.
+        </member>
+        <member name="F:NPOI.HPSF.CustomProperties.dictionaryNameToID">
+            Maps property names To property IDs.
+        </member>
+        <member name="F:NPOI.HPSF.CustomProperties.isPure">
+            Tells whether this object is pure or not.
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.Object,System.Object)">
+            <summary>
+            Puts a {@link CustomProperty} into this map. It is assumed that the
+            {@link CustomProperty} alReady has a valid ID. Otherwise use
+            {@link #Put(CustomProperty)}.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="customProperty">The custom property.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(NPOI.HPSF.CustomProperty)">
+            <summary>
+            Puts a {@link CustomProperty} that has not yet a valid ID into this
+            map. The method will allocate a suitable ID for the custom property:
+            <ul>
+            	<li>If there is alReady a property with the same name, take the ID
+            of that property.</li>
+            	<li>Otherwise Find the highest ID and use its value plus one.</li>
+            </ul>
+            </summary>
+            <param name="customProperty">The custom property.</param>
+            <returns>If the was alReady a property with the same name, the</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Remove(System.String)">
+            <summary>
+            Removes a custom property.
+            </summary>
+            <param name="name">The name of the custom property To Remove</param>
+            <returns>The Removed property or 
+            <c>null</c>
+             if the specified property was not found.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.String)">
+            <summary>
+            Adds a named string property.
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.Int64)">
+            <summary>
+            Adds a named long property
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.Double)">
+            <summary>
+            Adds a named double property.
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.Int32)">
+            <summary>
+            Adds a named integer property.
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.Boolean)">
+            <summary>
+            Adds a named bool property.
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.CustomProperties.Put(System.String,System.DateTime)">
+            <summary>
+            Adds a named date property.
+            </summary>
+            <param name="name">The property's name.</param>
+            <param name="value">The property's value.</param>
+            <returns>the property that was stored under the specified name before, or
+            <c>null</c>
+             if there was no such property before.</returns>
+        </member>
+        <member name="P:NPOI.HPSF.CustomProperties.Item(System.String)">
+            <summary>
+            Gets the <see cref="T:System.Object"/> with the specified name.
+            </summary>
+            <value>the value or 
+            <c>null</c>
+             if a value with the specified
+            name is not found in the custom properties.</value>
+        </member>
+        <member name="P:NPOI.HPSF.CustomProperties.Dictionary">
+            <summary>
+            Gets the dictionary which Contains IDs and names of the named custom
+            properties.
+            </summary>
+            <value>The dictionary.</value>
+        </member>
+        <member name="P:NPOI.HPSF.CustomProperties.Codepage">
+            <summary>
+            Gets or sets the codepage.
+            </summary>
+            <value>The codepage.</value>
+        </member>
+        <member name="P:NPOI.HPSF.CustomProperties.IsPure">
+            <summary>
+            Tells whether this {@link CustomProperties} instance is pure or one or
+            more properties of the underlying low-level property Set has been
+            dropped.
+            </summary>
+            <value><c>true</c> if this instance is pure; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:NPOI.HPSF.IllegalPropertySetDataException">
+            <summary>
+            This exception is thrown when there is an illegal value Set in a
+            {@link PropertySet}. For example, a {@link Variant#VT_BOOL} must
+            have a value of <c>-1 (true)</c> or <c>0 (false)</c>.
+            Any other value would trigger this exception. It supports a nested
+            "reason" throwable, i.e. an exception that caused this one To be
+            thrown.
+            @author Drew Varner(Drew.Varner atDomain sc.edu)
+            @since 2002-05-26
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalPropertySetDataException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalPropertySetDataException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalPropertySetDataException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalPropertySetDataException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalPropertySetDataException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalPropertySetDataException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="M:NPOI.HPSF.IllegalPropertySetDataException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.IllegalPropertySetDataException"/> class.
+            </summary>
+            <param name="msg"> The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.Wellknown.PropertyIDMap">
+            <summary>
+            This is a dictionary which maps property ID values To property
+            ID strings.
+            The methods {@link #GetSummaryInformationProperties} and {@link
+            #GetDocumentSummaryInformationProperties} return singleton {@link
+            PropertyIDMap}s. An application that wants To extend these maps
+            should treat them as unmodifiable, copy them and modifiy the
+            copies.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_TITLE">
+            ID of the property that denotes the document's title 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_SUBJECT">
+            ID of the property that denotes the document's subject 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_AUTHOR">
+            ID of the property that denotes the document's author 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_KEYWORDS">
+            ID of the property that denotes the document's keywords 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_COMMENTS">
+            ID of the property that denotes the document's comments 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_TEMPLATE">
+            ID of the property that denotes the document's template 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_LASTAUTHOR">
+            ID of the property that denotes the document's last author 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_REVNUMBER">
+            ID of the property that denotes the document's revision number 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_EDITTIME">
+            ID of the property that denotes the document's edit time 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_LASTPRINTED">
+            ID of the property that denotes the DateTime and time the document was
+            last printed 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_Create_DTM">
+            ID of the property that denotes the DateTime and time the document was
+            Created. 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_LASTSAVE_DTM">
+            ID of the property that denotes the DateTime and time the document was
+            saved 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_PAGECOUNT">
+            ID of the property that denotes the number of pages in the
+            document 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_WORDCOUNT">
+            ID of the property that denotes the number of words in the
+            document 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_CHARCOUNT">
+            ID of the property that denotes the number of characters in the
+            document 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_THUMBNAIL">
+            ID of the property that denotes the document's thumbnail 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_APPNAME">
+            ID of the property that denotes the application that Created the
+            document 
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_SECURITY">
+            ID of the property that denotes whether Read/Write access To the
+            document is allowed or whether is should be opened as Read-only. It can
+            have the following values:
+            
+            <table>
+             <tbody>
+              <tr>
+               <th>Value</th>
+               <th>Description</th>
+              </tr>
+              <tr>
+               <th>0</th>
+               <th>No restriction</th>
+              </tr>
+              <tr>
+               <th>2</th>
+               <th>Read-only recommended</th>
+              </tr>
+              <tr>
+               <th>4</th>
+               <th>Read-only enforced</th>
+              </tr>
+             </tbody>
+            </table>
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_DICTIONARY">
+            The entry is a dictionary.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_CODEPAGE">
+            The entry denotes a code page.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_CATEGORY">
+            The entry is a string denoting the category the file belongs
+            To, e.g. review, memo, etc. This is useful To Find documents of
+            same type.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_PRESFORMAT">
+            TarGet format for power point presentation, e.g. 35mm,
+            printer, video etc.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_BYTECOUNT">
+            Number of bytes.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_LINECOUNT">
+            Number of lines.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_PARCOUNT">
+            Number of paragraphs.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_SLIDECOUNT">
+            Number of slides in a power point presentation.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_NOTECOUNT">
+            Number of slides with notes.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_HIDDENCOUNT">
+            Number of hidden slides.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_MMCLIPCOUNT">
+            Number of multimedia clips, e.g. sound or video.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_SCALE">
+            This entry is Set To -1 when scaling of the thumbnail Is
+            desired. Otherwise the thumbnail should be cropped.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_HEADINGPAIR">
+            This entry denotes an internally used property. It is a
+            vector of variants consisting of pairs of a string (VT_LPSTR)
+            and a number (VT_I4). The string is a heading name, and the
+            number tells how many document parts are under that
+            heading.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_DOCPARTS">
+            This entry Contains the names of document parts (word: names
+            of the documents in the master document, excel: sheet names,
+            power point: slide titles, binder: document names).
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_MANAGER">
+            This entry Contains the name of the project manager.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_COMPANY">
+            This entry Contains the company name.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_LINKSDIRTY">
+            If this entry is -1 the links are dirty and should be
+            re-evaluated.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.PID_MAX">
+            The highest well-known property ID. Applications are free To use higher values for custom purposes.
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.summaryInformationProperties">
+            Contains the summary information property ID values and
+            associated strings. See the overall HPSF documentation for
+            details!
+        </member>
+        <member name="F:NPOI.HPSF.Wellknown.PropertyIDMap.documentSummaryInformationProperties">
+            Contains the summary information property ID values and
+            associated strings. See the overall HPSF documentation for
+            details!
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.PropertyIDMap.#ctor(System.Int32,System.Single)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Wellknown.PropertyIDMap"/> class.
+            </summary>
+            <param name="initialCapacity">initialCapacity The initial capacity as defined for
+            {@link HashMap}</param>
+            <param name="loadFactor">The load factor as defined for {@link HashMap}</param>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.PropertyIDMap.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Wellknown.PropertyIDMap"/> class.
+            </summary>
+            <param name="map">The instance To be Created is backed by this map.</param>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.PropertyIDMap.Put(System.Int64,System.String)">
+            <summary>
+            Puts a ID string for an ID into the {@link
+            PropertyIDMap}.
+            </summary>
+            <param name="id">The ID string.</param>
+            <param name="idString">The id string.</param>
+            <returns>As specified by the {@link java.util.Map} interface, this method
+            returns the previous value associated with the specified id</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Wellknown.PropertyIDMap.Get(System.Int64)">
+            <summary>
+            Gets the ID string for an ID from the {@link
+            PropertyIDMap}.
+            </summary>
+            <param name="id">The ID.</param>
+            <returns>The ID string associated with id</returns>
+        </member>
+        <member name="P:NPOI.HPSF.Wellknown.PropertyIDMap.SummaryInformationProperties">
+            <summary>
+            Gets the Summary Information properties singleton
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.HPSF.Wellknown.PropertyIDMap.DocumentSummaryInformationProperties">
+            <summary>
+            Gets the Document Summary Information properties
+            singleton.
+            </summary>
+            <returns>The Document Summary Information properties singleton.</returns>
+        </member>
+        <member name="T:NPOI.HPSF.PropertySetFactory">
+            <summary>
+            Factory class To Create instances of {@link SummaryInformation},
+            {@link DocumentSummaryInformation} and {@link PropertySet}.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySetFactory.Create(System.IO.Stream)">
+            <summary>
+            Creates the most specific {@link PropertySet} from an {@link
+            InputStream}. This is preferrably a {@link
+            DocumentSummaryInformation} or a {@link SummaryInformation}. If
+            the specified {@link InputStream} does not contain a property
+            Set stream, an exception is thrown and the {@link InputStream}
+            is repositioned at its beginning.
+            </summary>
+            <param name="stream">Contains the property set stream's data.</param>
+            <returns>The Created {@link PropertySet}.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySetFactory.CreateSummaryInformation">
+            <summary>
+            Creates a new summary information
+            </summary>
+            <returns>the new summary information.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.PropertySetFactory.CreateDocumentSummaryInformation">
+            <summary>
+            Creates a new document summary information.
+            </summary>
+            <returns>the new document summary information.</returns>
+        </member>
+        <member name="T:NPOI.HPSF.Thumbnail">
+            <summary>
+            Class To manipulate data in the Clipboard Variant (Variant#VT_CF VT_CF) format.
+            @author Drew Varner (Drew.Varner inOrAround sc.edu)
+            @since 2002-04-29
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.OFFSet_CFTAG">
+            <summary>
+            OffSet in bytes where the Clipboard Format Tag starts in the <c>byte[]</c> returned by SummaryInformation#GetThumbnail()
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.OFFSet_CF">
+            <summary>
+            OffSet in bytes where the Clipboard Format starts in the <c>byte[]</c> returned by SummaryInformation#GetThumbnail()
+            </summary>
+            <remarks>This is only valid if the Clipboard Format Tag is CFTAG_WINDOWS</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.OFFSet_WMFDATA">
+            <summary>
+            OffSet in bytes where the Windows Metafile (WMF) image data starts in the <c>byte[]</c> returned by SummaryInformation#GetThumbnail()
+            There is only WMF data at this point in the
+            <c>byte[]</c> if the Clipboard Format Tag is
+            CFTAG_WINDOWS and the Clipboard Format is 
+            CF_METAFILEPICT.
+            </summary>
+            <remarks>Note: The <c>byte[]</c> that starts at
+            <c>OFFSet_WMFDATA</c> and ends at
+            <c>GetThumbnail().Length - 1</c> forms a complete WMF
+            image. It can be saved To disk with a <c>.wmf</c> file
+            type and Read using a WMF-capable image viewer.</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CFTAG_WINDOWS">
+            <summary>
+            Clipboard Format Tag - Windows clipboard format
+            </summary>
+            <remarks>A <c>DWORD</c> indicating a built-in Windows clipboard format value</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CFTAG_MACINTOSH">
+            <summary>
+            Clipboard Format Tag - Macintosh clipboard format
+            </summary>
+            <remarks>A <c>DWORD</c> indicating a Macintosh clipboard format value</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CFTAG_FMTID">
+            <summary>
+            Clipboard Format Tag - Format ID
+            </summary>
+            <remarks>A GUID containing a format identifier (FMTID). This is rarely used.</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CFTAG_NODATA">
+            <summary>
+            Clipboard Format Tag - No Data
+            </summary>
+            <remarks>A <c>DWORD</c> indicating No data. This is rarely used.</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CF_METAFILEPICT">
+            <summary>
+            Clipboard Format - Windows metafile format. This is the recommended way To store thumbnails in Property Streams.
+            </summary>
+            <remarks>Note:This is not the same format used in
+            regular WMF images. The clipboard version of this format has an
+            extra clipboard-specific header.</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CF_DIB">
+            <summary>
+            Clipboard Format - Device Independent Bitmap
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CF_ENHMETAFILE">
+            <summary>
+            Clipboard Format - Enhanced Windows metafile format
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.CF_BITMAP">
+            <summary>
+            Clipboard Format - Bitmap
+            </summary>
+            <remarks>see msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp</remarks>
+        </member>
+        <member name="F:NPOI.HPSF.Thumbnail.thumbnailData">
+            A <c>byte[]</c> To hold a thumbnail image in (
+            Variant#VT_CF VT_CF) format.
+        </member>
+        <member name="M:NPOI.HPSF.Thumbnail.#ctor">
+            <summary>
+            Default Constructor. If you use it then one you'll have To Add
+            the thumbnail <c>byte[]</c> from {@link
+            SummaryInformation#GetThumbnail()} To do any useful
+            manipulations, otherwise you'll Get a
+            <c>NullPointerException</c>.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.Thumbnail.#ctor(System.Byte[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.Thumbnail"/> class.
+            </summary>
+            <param name="thumbnailData">The thumbnail data.</param>
+        </member>
+        <member name="M:NPOI.HPSF.Thumbnail.GetClipboardFormat">
+            <summary>
+            Returns an <c>int</c> representing the Clipboard
+            Format
+            Will throw an exception if the Thumbnail's Clipboard Format
+            Tag is not {@link Thumbnail#CFTAG_WINDOWS CFTAG_WINDOWS}.
+            Possible return values are:
+            <ul>
+            	<li>{@link #CF_METAFILEPICT CF_METAFILEPICT}</li>
+            	<li>{@link #CF_DIB CF_DIB}</li>
+            	<li>{@link #CF_ENHMETAFILE CF_ENHMETAFILE}</li>
+            	<li>{@link #CF_BITMAP CF_BITMAP}</li>
+            </ul>
+            </summary>
+            <returns>a flag indicating the Clipboard Format</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Thumbnail.GetThumbnailAsWMF">
+            <summary>
+            Returns the Thumbnail as a <c>byte[]</c> of WMF data
+            if the Thumbnail's Clipboard Format Tag is {@link
+            #CFTAG_WINDOWS CFTAG_WINDOWS} and its Clipboard Format is
+            {@link #CF_METAFILEPICT CF_METAFILEPICT}
+            This
+            <c>byte[]</c> is in the traditional WMF file, not the
+            clipboard-specific version with special headers.
+            See <a href="http://www.wvware.com/caolan/ora-wmf.html" tarGet="_blank">http://www.wvware.com/caolan/ora-wmf.html</a>
+            for more information on the WMF image format.
+            @return A WMF image of the Thumbnail
+            @throws HPSFException if the Thumbnail isn't CFTAG_WINDOWS and
+            CF_METAFILEPICT
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.HPSF.Thumbnail.ThumbnailData">
+            <summary>
+            Gets or sets the thumbnail as a <c>byte[]</c> in {@link
+            Variant#VT_CF VT_CF} format.
+            </summary>
+            <value>The thumbnail value</value>
+        </member>
+        <member name="P:NPOI.HPSF.Thumbnail.ClipboardFormatTag">
+            <summary>
+            Returns an <c>int</c> representing the Clipboard
+            Format Tag
+            Possible return values are:
+            <ul>
+            	<li>{@link #CFTAG_WINDOWS CFTAG_WINDOWS}</li>
+            	<li>{@link #CFTAG_MACINTOSH CFTAG_MACINTOSH}</li>
+            	<li>{@link #CFTAG_FMTID CFTAG_FMTID}</li>
+            	<li>{@link #CFTAG_NODATA CFTAG_NODATA}</li>
+            </ul>
+            </summary>
+            <returns>A flag indicating the Clipboard Format Tag</returns>
+        </member>
+        <member name="T:NPOI.HPSF.Constants">
+            <summary>
+            Defines constants of general use.
+            @author Rainer Klute klute@rainer-klute.de
+            @since 2004-06-20
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_037">
+            Codepage 037, a special case 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_SJIS">
+            Codepage for SJIS 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_GBK">
+            Codepage for GBK, aka MS936 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MS949">
+            Codepage for MS949 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_UTF16">
+            Codepage for UTF-16 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_UTF16_BE">
+            Codepage for UTF-16 big-endian 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1250">
+            Codepage for Windows 1250 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1251">
+            Codepage for Windows 1251 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1252">
+            Codepage for Windows 1252 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1253">
+            Codepage for Windows 1253 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1254">
+            Codepage for Windows 1254 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1255">
+            Codepage for Windows 1255 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1256">
+            Codepage for Windows 1256 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1257">
+            Codepage for Windows 1257 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_WINDOWS_1258">
+            Codepage for Windows 1258 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_JOHAB">
+            Codepage for Johab 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_ROMAN">
+            Codepage for Macintosh Roman (Java: MacRoman) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_JAPAN">
+            Codepage for Macintosh Japan (Java: unknown - use SJIS, cp942 or
+            cp943) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_CHINESE_TRADITIONAL">
+            Codepage for Macintosh Chinese Traditional (Java: unknown - use Big5,
+            MS950, or cp937) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_KOREAN">
+            Codepage for Macintosh Korean (Java: unknown - use EUC_KR or
+            cp949) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_ARABIC">
+            Codepage for Macintosh Arabic (Java: MacArabic) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_HEBREW">
+            Codepage for Macintosh Hebrew (Java: MacHebrew) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_GREEK">
+            Codepage for Macintosh Greek (Java: MacGreek) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_CYRILLIC">
+            Codepage for Macintosh Cyrillic (Java: MacCyrillic) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_CHINESE_SIMPLE">
+            Codepage for Macintosh Chinese Simplified (Java: unknown - use
+            EUC_CN, ISO2022_CN_GB, MS936 or cp935) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_ROMANIA">
+            Codepage for Macintosh Romanian (Java: MacRomania) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_UKRAINE">
+            Codepage for Macintosh Ukrainian (Java: MacUkraine) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_THAI">
+            Codepage for Macintosh Thai (Java: MacThai) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_CENTRAL_EUROPE">
+            Codepage for Macintosh Central Europe (Latin-2)
+            (Java: MacCentralEurope) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_ICELAND">
+            Codepage for Macintosh Iceland (Java: MacIceland) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_TURKISH">
+            Codepage for Macintosh Turkish (Java: MacTurkish) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_MAC_CROATIAN">
+            Codepage for Macintosh Croatian (Java: MacCroatian) 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_US_ACSII">
+            Codepage for US-ASCII 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_KOI8_R">
+            Codepage for KOI8-R 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_1">
+            Codepage for ISO-8859-1 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_2">
+            Codepage for ISO-8859-2 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_3">
+            Codepage for ISO-8859-3 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_4">
+            Codepage for ISO-8859-4 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_5">
+            Codepage for ISO-8859-5 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_6">
+            Codepage for ISO-8859-6 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_7">
+            Codepage for ISO-8859-7 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_8">
+            Codepage for ISO-8859-8 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_8859_9">
+            Codepage for ISO-8859-9 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_2022_JP1">
+            Codepage for ISO-2022-JP 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_2022_JP2">
+            Another codepage for ISO-2022-JP 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_2022_JP3">
+            Yet another codepage for ISO-2022-JP 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_ISO_2022_KR">
+            Codepage for ISO-2022-KR 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_EUC_JP">
+            Codepage for EUC-JP 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_EUC_KR">
+            Codepage for EUC-KR 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_GB2312">
+            Codepage for GB2312 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_GB18030">
+            Codepage for GB18030 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_US_ASCII2">
+            Another codepage for US-ASCII 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_UTF8">
+            Codepage for UTF-8 
+        </member>
+        <member name="F:NPOI.HPSF.Constants.CP_UNICODE">
+            Codepage for Unicode 
+        </member>
+        <member name="T:NPOI.HPSF.NoFormatIDException">
+            <summary>
+            This exception is thrown if a {@link MutablePropertySet} is To be written
+            but does not have a formatID Set (see {@link
+            MutableSection#SetFormatID(ClassID)} or
+            {@link org.apache.poi.hpsf.MutableSection#SetFormatID(byte[])}.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2002-09-03 
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoFormatIDException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoFormatIDException"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.NoFormatIDException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoFormatIDException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoFormatIDException.#ctor(System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoFormatIDException"/> class.
+            </summary>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="M:NPOI.HPSF.NoFormatIDException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.NoFormatIDException"/> class.
+            </summary>
+            <param name="msg">The exception's message string</param>
+            <param name="reason">This exception's underlying reason</param>
+        </member>
+        <member name="T:NPOI.HPSF.Util">
+            <summary>
+            Provides various static utility methods.
+            @author Rainer Klute (klute@rainer-klute.de)
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Copy(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Copies a part of a byte array into another byte array.
+            </summary>
+            <param name="src">The source byte array.</param>
+            <param name="srcOffSet">OffSet in the source byte array.</param>
+            <param name="Length">The number of bytes To Copy.</param>
+            <param name="dst">The destination byte array.</param>
+            <param name="dstOffSet">OffSet in the destination byte array.</param>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Cat(System.Byte[][])">
+            <summary>
+            Concatenates the contents of several byte arrays into a
+            single one.
+            </summary>
+            <param name="byteArrays">The byte arrays To be conCatened.</param>
+            <returns>A new byte array containing the conCatenated byte arrays.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Copy(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Copies bytes from a source byte array into a new byte
+            array.
+            </summary>
+            <param name="src">Copy from this byte array.</param>
+            <param name="offset">Start Copying here.</param>
+            <param name="Length">Copy this many bytes.</param>
+            <returns>The new byte array. Its Length is number of copied bytes.</returns>
+        </member>
+        <member name="F:NPOI.HPSF.Util.EPOCH_DIFF">
+            The difference between the Windows epoch (1601-01-01
+            00:00:00) and the Unix epoch (1970-01-01 00:00:00) in
+            milliseconds: 11644473600000L. (Use your favorite spReadsheet
+            program To verify the correctness of this value. By the way,
+            did you notice that you can tell from the epochs which
+            operating system is the modern one? :-))
+        </member>
+        <member name="M:NPOI.HPSF.Util.FiletimeToDate(System.Int32,System.Int32)">
+            <summary>
+            Converts a Windows FILETIME into a {@link DateTime}. The Windows
+            FILETIME structure holds a DateTime and time associated with a
+            file. The structure identifies a 64-bit integer specifying the
+            number of 100-nanosecond intervals which have passed since
+            January 1, 1601. This 64-bit value is split into the two double
+            words stored in the structure.
+            </summary>
+            <param name="high">The higher double word of the FILETIME structure.</param>
+            <param name="low">The lower double word of the FILETIME structure.</param>
+            <returns>The Windows FILETIME as a {@link DateTime}.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.FiletimeToDate(System.Int64)">
+            <summary>
+            Converts a Windows FILETIME into a {@link DateTime}. The Windows
+            FILETIME structure holds a DateTime and time associated with a
+            file. The structure identifies a 64-bit integer specifying the
+            number of 100-nanosecond intervals which have passed since
+            January 1, 1601.
+            </summary>
+            <param name="filetime">The filetime To Convert.</param>
+            <returns>The Windows FILETIME as a {@link DateTime}.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.DateToFileTime(System.DateTime)">
+            <summary>
+            Converts a {@link DateTime} into a filetime.
+            </summary>
+            <param name="dateTime">The DateTime To be Converted</param>
+            <returns>The filetime</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.AreEqual(System.Collections.IList,System.Collections.IList)">
+            <summary>
+            Compares To object arrays with regarding the objects' order. For
+            example, [1, 2, 3] and [2, 1, 3] are equal.
+            </summary>
+            <param name="c1">The first object array.</param>
+            <param name="c2">The second object array.</param>
+            <returns><c>true</c>
+             if the object arrays are equal,
+            <c>false</c>
+             if they are not.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.internalEquals(System.Collections.IList,System.Collections.IList)">
+            <summary>
+            Internals the equals.
+            </summary>
+            <param name="c1">The c1.</param>
+            <param name="c2">The c2.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Pad4(System.Byte[])">
+            <summary>
+            Pads a byte array with 0x00 bytes so that its Length is a multiple of
+            4.
+            </summary>
+            <param name="ba">The byte array To pad.</param>
+            <returns>The padded byte array.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Pad4(System.Char[])">
+            <summary>
+            Pads a character array with 0x0000 characters so that its Length is a
+            multiple of 4.
+            </summary>
+            <param name="ca">The character array To pad.</param>
+            <returns>The padded character array.</returns>
+        </member>
+        <member name="M:NPOI.HPSF.Util.Pad4(System.String)">
+            <summary>
+            Pads a string with 0x0000 characters so that its Length is a
+            multiple of 4.
+            </summary>
+            <param name="s">The string To pad.</param>
+            <returns> The padded string as a character array.</returns>
+        </member>
+        <member name="T:NPOI.HPSF.SummaryInformation">
+            <summary>
+            Convenience class representing a Summary Information stream in a
+            Microsoft Office document.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @see DocumentSummaryInformation
+            @since 2002-02-09
+            </summary>
+        </member>
+        <member name="F:NPOI.HPSF.SummaryInformation.DEFAULT_STREAM_NAME">
+            The document name a summary information stream usually has in a POIFS
+            filesystem.
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.#ctor(NPOI.HPSF.PropertySet)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.HPSF.SummaryInformation"/> class.
+            </summary>
+            <param name="ps">A property Set which should be Created from a summary
+            information stream.</param>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveTitle">
+            <summary>
+            Removes the title.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveSubject">
+            <summary>
+            Removes the subject.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveAuthor">
+            <summary>
+            Removes the author.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveKeywords">
+            <summary>
+            Removes the keywords.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveComments">
+            <summary>
+            Removes the comments.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveTemplate">
+            <summary>
+            Removes the template.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveLastAuthor">
+            <summary>
+            Removes the last author.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveRevNumber">
+            <summary>
+            Removes the rev number.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveEditTime">
+            <summary>
+            Removes the edit time.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveLastPrinted">
+            <summary>
+            Removes the last printed.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveCreateDateTime">
+            <summary>
+            Removes the create date time.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveLastSaveDateTime">
+            <summary>
+            Removes the last save date time.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemovePageCount">
+            <summary>
+            Removes the page count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveWordCount">
+            <summary>
+            Removes the word count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveCharCount">
+            <summary>
+            Removes the char count.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveThumbnail">
+            <summary>
+            Removes the thumbnail.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveApplicationName">
+            <summary>
+            Removes the name of the application.
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.SummaryInformation.RemoveSecurity">
+            <summary>
+            Removes the security code.
+            </summary>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+            <value>The title.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Subject">
+            <summary>
+            Gets or sets the subject.
+            </summary>
+            <value>The subject.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Author">
+            <summary>
+            Gets or sets the author.
+            </summary>
+            <value>The author.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Keywords">
+            <summary>
+            Gets or sets the keywords.
+            </summary>
+            <value>The keywords.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Comments">
+            <summary>
+            Gets or sets the comments.
+            </summary>
+            <value>The comments.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Template">
+            <summary>
+            Gets or sets the template.
+            </summary>
+            <value>The template.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.LastAuthor">
+            <summary>
+            Gets or sets the last author.
+            </summary>
+            <value>The last author.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.RevNumber">
+            <summary>
+            Gets or sets the rev number.
+            </summary>
+            <value>The rev number.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.EditTime">
+            <summary>
+            Returns the Total time spent in editing the document (or 0).
+            </summary>
+            <value>The Total time spent in editing the document or 0 if the {@link
+            SummaryInformation} does not contain this information.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.LastPrinted">
+            <summary>
+            Gets or sets the last printed time
+            </summary>
+            <value>The last printed time</value>
+            Returns the last printed time (or <c>null</c>).
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.CreateDateTime">
+            <summary>
+            Gets or sets the create date time.
+            </summary>
+            <value>The create date time.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.LastSaveDateTime">
+            <summary>
+            Gets or sets the last save date time.
+            </summary>
+            <value>The last save date time.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.PageCount">
+            <summary>
+            Gets or sets the page count or 0 if the {@link SummaryInformation} does
+            not contain a page count.
+            </summary>
+            <value>The page count or 0 if the {@link SummaryInformation} does not
+            contain a page count.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.WordCount">
+            <summary>
+            Gets or sets the word count or 0 if the {@link SummaryInformation} does
+            not contain a word count.
+            </summary>
+            <value>The word count.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.CharCount">
+            <summary>
+            Gets or sets the character count or 0 if the {@link SummaryInformation}
+            does not contain a char count.
+            </summary>
+            <value>The character count.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Thumbnail">
+            <summary>
+            Gets or sets the thumbnail (or <c>null</c>) <strong>when this
+            method is implemented. Please note that the return type is likely To
+            Change!</strong>
+            <strong>Hint To developers:</strong> Drew Varner &lt;Drew.Varner
+            -at- sc.edu&gt; said that this is an image in WMF or Clipboard (BMP?)
+            format. However, we won't do any conversion into any image type but
+            instead just return a byte array.
+            </summary>
+            <value>The thumbnail.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.ApplicationName">
+            <summary>
+            Gets or sets the name of the application.
+            </summary>
+            <value>The name of the application.</value>
+        </member>
+        <member name="P:NPOI.HPSF.SummaryInformation.Security">
+            <summary>
+            Gets or sets a security code which is one of the following values:
+            <ul>
+            	<li>0 if the {@link SummaryInformation} does not contain a
+            security field or if there is no security on the document. Use
+            {@link PropertySet#wasNull()} To distinguish between the two
+            cases!</li>
+            	<li>1 if the document is password protected</li>
+            	<li>2 if the document is Read-only recommended</li>
+            	<li>4 if the document is Read-only enforced</li>
+            	<li>8 if the document is locked for annotations</li>
+            </ul>
+            </summary>
+            <value>The security code</value>
+        </member>
+        <member name="T:NPOI.HPSF.TypeWriter">
+            <summary>
+            Class for writing little-endian data and more.
+            @author Rainer Klute 
+            <a href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+            @since 2003-02-20 
+            </summary>
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,System.Int16)">
+            <summary>
+            Writes a two-byte value (short) To an output stream.
+            </summary>
+            <param name="out1">The stream To Write To..</param>
+            <param name="n">The number of bytes that have been written.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,System.Int32)">
+             Writes a four-byte value To an output stream.
+            
+             @param out The stream To Write To.
+             @param n The value To Write.
+             @exception IOException if an I/O error occurs
+             @return The number of bytes written To the output stream. 
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,System.UInt32)">
+             Writes a four-byte value To an output stream.
+            
+             @param out The stream To Write To.
+             @param n The value To Write.
+             @exception IOException if an I/O error occurs
+             @return The number of bytes written To the output stream. 
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,System.Int64)">
+             Writes a eight-byte value To an output stream.
+            
+             @param out The stream To Write To.
+             @param n The value To Write.
+             @exception IOException if an I/O error occurs
+             @return The number of bytes written To the output stream. 
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteUShortToStream(System.IO.Stream,System.Int32)">
+             Writes an unsigned two-byte value To an output stream.
+            
+             @param out The stream To Write To
+             @param n The value To Write
+             @exception IOException if an I/O error occurs
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteUIntToStream(System.IO.Stream,System.UInt32)">
+             Writes an unsigned four-byte value To an output stream.
+            
+             @param out The stream To Write To.
+             @param n The value To Write.
+             @return The number of bytes that have been written To the output stream.
+             @exception IOException if an I/O error occurs
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,NPOI.Util.ClassID)">
+             Writes a 16-byte {@link ClassID} To an output stream.
+            
+             @param out The stream To Write To
+             @param n The value To Write
+             @return The number of bytes written
+             @exception IOException if an I/O error occurs
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,NPOI.HPSF.Property[],System.Int32)">
+            Writes an array of {@link Property} instances To an output stream
+            according To the Horrible Property  Format.
+            
+            @param out The stream To Write To
+            @param properties The array To Write To the stream
+            @param codepage The codepage number To use for writing strings
+            @exception IOException if an I/O error occurs
+            @throws UnsupportedVariantTypeException if HPSF does not support some
+                    variant type.
+        </member>
+        <member name="M:NPOI.HPSF.TypeWriter.WriteToStream(System.IO.Stream,System.Double)">
+             Writes a double value value To an output stream.
+            
+             @param out The stream To Write To.
+             @param n The value To Write.
+             @exception IOException if an I/O error occurs
+             @return The number of bytes written To the output stream. 
+        </member>
+    </members>
+</doc>

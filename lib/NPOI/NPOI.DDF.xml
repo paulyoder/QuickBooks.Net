@@ -1,0 +1,2295 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NPOI.DDF</name>
+    </assembly>
+    <members>
+        <member name="T:NPOI.DDF.EscherSerializationListener">
+             Interface for listening to escher serialization events.
+            
+             @author Glen Stampoultzis (glens at apache.org)
+        </member>
+        <member name="M:NPOI.DDF.EscherSerializationListener.BeforeRecordSerialize(System.Int32,System.Int16,NPOI.DDF.EscherRecord)">
+             Fired before a given escher record is Serialized.
+            
+             @param offset    The position in the data array at which the record will be Serialized.
+             @param recordId  The id of the record about to be Serialized.
+        </member>
+        <member name="M:NPOI.DDF.EscherSerializationListener.AfterRecordSerialize(System.Int32,System.Int16,System.Int32,NPOI.DDF.EscherRecord)">
+             Fired after a record has been Serialized.
+            
+             @param offset    The position of the end of the Serialized record + 1
+             @param recordId  The id of the record about to be Serialized
+             @param size      The number of bytes written for this record.  If it is a container
+                              record then this will include the size of any included records.
+        </member>
+        <member name="T:NPOI.DDF.EscherProperty">
+            <summary>
+            This is the abstract base class for all escher properties.
+            @see EscherOptRecord
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperty.#ctor(System.Int16)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherProperty"/> class.
+            </summary>
+            <param name="id">The id is distinct from the actual property number.  The id includes the property number the blip id
+            flag and an indicator whether the property is complex or not.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperty.#ctor(System.Int16,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherProperty"/> class.The three parameters are combined to form a property
+            id.
+            </summary>
+            <param name="propertyNumber">The property number.</param>
+            <param name="isComplex">if set to <c>true</c> [is complex].</param>
+            <param name="isBlipId">if set to <c>true</c> [is blip id].</param> 
+        </member>
+        <member name="M:NPOI.DDF.EscherProperty.SerializeSimplePart(System.Byte[],System.Int32)">
+            <summary>
+            Escher properties consist of a simple fixed Length part and a complex variable Length part.
+            The fixed Length part is Serialized first.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="pos">The pos.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperty.SerializeComplexPart(System.Byte[],System.Int32)">
+            <summary>
+            Escher properties consist of a simple fixed Length part and a complex variable Length part.
+            The fixed Length part is Serialized first.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="pos">The pos.</param>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.Id">
+            <summary>
+            Gets the id.
+            </summary>
+            <value>The id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.PropertyNumber">
+            <summary>
+            Gets the property number.
+            </summary>
+            <value>The property number.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.IsComplex">
+            <summary>
+            Gets a value indicating whether this instance is complex.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is complex; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.IsBlipId">
+            <summary>
+            Gets a value indicating whether this instance is blip id.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is blip id; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.Name">
+            <summary>
+            Gets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherProperty.PropertySize">
+            <summary>
+            Most properties are just 6 bytes in Length.  Override this if we're
+            dealing with complex properties.
+            </summary>
+            <value>The size of the property.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherBlipWMFRecord">
+            <summary>
+            The blip record is used to hold details about large binary objects that occur in escher such
+            as JPEG, GIF, PICT and WMF files.  The contents of the stream is usually compressed.  Inflate
+            can be used to decompress the data.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="T:NPOI.DDF.EscherBlipRecord">
+            <summary>
+            @author Glen Stampoultzis
+            @version $Id: EscherBlipRecord.java 569827 2007-08-26 15:26:29Z yegor $
+            </summary>
+        </member>
+        <member name="T:NPOI.DDF.EscherRecord">
+            <summary>
+            The base abstract record from which all escher records are defined.  Subclasses will need
+            to define methods for serialization/deserialization and for determining the record size.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherRecord"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.FillFields(System.Byte[],NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            Delegates to FillFields(byte[], int, EscherRecordFactory)
+            </summary>
+            <param name="data">The data.</param>
+            <param name="f">The f.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            The contract of this method is to deSerialize an escher record including
+            it's children.
+            </summary>
+            <param name="data">The byte array containing the Serialized escher
+            records.</param>
+            <param name="offset">The offset into the byte array.</param>
+            <param name="recordFactory">A factory for creating new escher records.</param>
+            <returns>The number of bytes written.</returns>       
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.ReadHeader(System.Byte[],System.Int32)">
+            <summary>
+            Reads the 8 byte header information and populates the 
+            <c>options</c>
+            and 
+            <c>recordId</c>
+             records.
+            </summary>
+            <param name="data">the byte array to Read from</param>
+            <param name="offset">the offset to start Reading from</param>
+            <returns>the number of bytes remaining in this record.  This</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.Serialize">
+            <summary>
+            Serializes to a new byte array.  This is done by delegating to
+            Serialize(int, byte[]);
+            </summary>
+            <returns>the Serialized record.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.Serialize(System.Int32,System.Byte[])">
+            <summary>
+            Serializes to an existing byte array without serialization listener.
+            This is done by delegating to Serialize(int, byte[], EscherSerializationListener).
+            </summary>
+            <param name="offset">the offset within the data byte array.</param>
+            <param name="data">the data array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes the record to an existing byte array.
+            </summary>
+            <param name="offset">the offset within the byte array.</param>
+            <param name="data">the offset within the byte array</param>
+            <param name="listener">a listener for begin and end serialization events.  This.
+            is useful because the serialization is
+            hierarchical/recursive and sometimes you need to be able
+            break into that.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.Clone">
+            <summary>
+            Creates a new object that is a copy of the current instance.
+            </summary>
+            <returns>
+            A new object that is a copy of this instance.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.GetChild(System.Int32)">
+            <summary>
+            Returns the indexed child record.
+            </summary>
+            <param name="index">The index.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.Display(System.Int32)">
+            <summary>
+            The display methods allows escher variables to print the record names
+            according to their hierarchy.
+            </summary>
+            <param name="indent">The current indent level.</param>  
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.GetInstance">
+            <summary>
+            Returns the instance part of the option record.
+            </summary>
+            <returns>The instance part of the record</returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.IsContainerRecord">
+            <summary>
+            Determine whether this is a container record by inspecting the option
+            field.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is container record; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.Options">
+            <summary>
+            Gets or sets the options field for this record.  All records have one
+            </summary>
+            <value>The options.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.RecordSize">
+            <summary>
+            Subclasses should effeciently return the number of bytes required to
+            Serialize the record.
+            </summary>
+            <value>number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.RecordId">
+            <summary>
+            Return the current record id.
+            </summary>
+            <value>The 16 bit record id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.ChildRecords">
+            <summary>
+            Gets or sets the child records.
+            </summary>
+            <value>Returns the children of this record.  By default this will
+            be an empty list.  EscherCotainerRecord is the only record that may contain children.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.RecordName">
+            <summary>
+            Gets the name of the record.
+            </summary>
+            <value>The name of the record.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherRecord.EscherRecordHeader">
+            <summary>
+            This class Reads the standard escher header.
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.EscherRecordHeader.ReadHeader(System.Byte[],System.Int32)">
+            <summary>
+            Reads the header.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="offset">The off set.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecord.EscherRecordHeader.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.EscherRecordHeader.Options">
+            <summary>
+            Gets the options.
+            </summary>
+            <value>The options.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.EscherRecordHeader.RecordId">
+            <summary>
+            Gets the record id.
+            </summary>
+            <value>The record id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRecord.EscherRecordHeader.RemainingBytes">
+            <summary>
+            Gets the remaining bytes.
+            </summary>
+            <value>The remaining bytes.</value>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into </param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes the record to an existing byte array.
+            </summary>
+            <param name="offset"> the offset within the byte array</param>
+            <param name="data">the data array to Serialize to</param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipRecord.PictureData">
+            <summary>
+            Gets or sets the picture data.
+            </summary>
+            <value>The picture data.</value>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipWMFRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deserializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>
+            The number of bytes Read from the byte array.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipWMFRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.
+            @param offset   
+            </summary>
+            <param name="offset">The offset into data to start writing the record data to.</param>
+            <param name="data">the data array to Serialize to</param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipWMFRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipWMFRecord.Compress(System.Byte[])">
+            <summary>
+            Compress the contents of the provided array
+            </summary>
+            <param name="data">An uncompressed byte array</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBlipWMFRecord.Decompress(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Decompresses the specified data.
+            </summary>
+            <param name="data">The compressed byte array.</param>
+            <param name="pos">The starting position into the byte array.</param>
+            <param name="Length">The number of compressed bytes to decompress.</param>
+            <returns>An uncompressed byte array</returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.SecondaryUID">
+            <summary>
+            Gets or sets the secondary UID.
+            </summary>
+            <value>The secondary UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.CacheOfSize">
+            <summary>
+            Gets or sets the size of the cache of.
+            </summary>
+            <value>The size of the cache of.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.BoundaryTop">
+            <summary>
+            Gets or sets the top boundary of the metafile drawing commands
+            </summary>
+            <value>The boundary top.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.BoundaryLeft">
+            <summary>
+            Gets or sets the left boundary of the metafile drawing commands
+            </summary>
+            <value>The boundary left.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.BoundaryWidth">
+            <summary>
+            Gets or sets the boundary width of the metafile drawing commands
+            </summary>
+            <value>The width of the boundary.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.BoundaryHeight">
+            <summary>
+            Gets or sets the boundary height of the metafile drawing commands
+            </summary>
+            <value>The height of the boundary.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.Width">
+            <summary>
+            Gets or sets the width of the metafile in EMU's (English Metric Units).
+            </summary>
+            <value>The width.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.Height">
+            <summary>
+            Gets or sets the height of the metafile in EMU's (English Metric Units).
+            </summary>
+            <value>The height.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.CacheOfSavedSize">
+            <summary>
+            Gets or sets the cache of the saved size
+            </summary>
+            <value>the cache of the saved size.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.CompressionFlag">
+            <summary>
+            Is the contents of the blip compressed?
+            </summary>
+            <value>The compression flag.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.Filter">
+            <summary>
+            Gets or sets the filter.
+            </summary>
+            <value>The filter.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBlipWMFRecord.Data">
+            <summary>
+            Gets or sets The BLIP data
+            </summary>
+            <value>The data.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherShapePathProperty">
+            <summary>
+            Defines the constants for the various possible shape paths.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="T:NPOI.DDF.EscherSimpleProperty">
+            <summary>
+            A simple property is of fixed Length and as a property number in Addition
+            to a 32-bit value.  Properties that can't be stored in only 32-bits are
+            stored as EscherComplexProperty objects.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.#ctor(System.Int16,System.Int32)">
+            <summary>
+            The id is distinct from the actual property number.  The id includes the property number the blip id
+            flag and an indicator whether the property is complex or not.
+            </summary>
+            <param name="id">The id.</param>
+            <param name="propertyValue">The property value.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.#ctor(System.Int16,System.Boolean,System.Boolean,System.Int32)">
+            <summary>
+            Constructs a new escher property.  The three parameters are combined to form a property
+            id.
+            </summary>
+            <param name="propertyNumber">The property number.</param>
+            <param name="isComplex">if set to <c>true</c> [is complex].</param>
+            <param name="isBlipId">if set to <c>true</c> [is blip id].</param>
+            <param name="propertyValue">The property value.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.SerializeSimplePart(System.Byte[],System.Int32)">
+            <summary>
+            Serialize the simple part of the escher record.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="offset">The off set.</param>
+            <returns>the number of bytes Serialized.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.SerializeComplexPart(System.Byte[],System.Int32)">
+            <summary>
+            Escher properties consist of a simple fixed Length part and a complex variable Length part.
+            The fixed Length part is Serialized first.
+            </summary>
+            <param name="data"></param>
+            <param name="pos"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.Equals(System.Object)">
+            <summary>
+            Returns true if one escher property is equal to another.
+            </summary>
+            <param name="o">The o.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSimpleProperty.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherSimpleProperty.PropertyValue">
+            <summary>
+            Return the 32 bit value of this property.
+            </summary>
+            <value>The property value.</value>
+        </member>
+        <member name="M:NPOI.DDF.EscherShapePathProperty.#ctor(System.Int16,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherShapePathProperty"/> class.
+            </summary>
+            <param name="propertyNumber">The property number.</param>
+            <param name="shapePath">The shape path.</param>
+        </member>
+        <member name="T:NPOI.DDF.EscherSpRecord">
+            <summary>
+            ToGether the the EscherOptRecord this record defines some of the basic
+            properties of a shape.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            The contract of this method is to deSerialize an escher record including
+            it's children.
+            </summary>
+            <param name="data">The byte array containing the Serialized escher
+            records.</param>
+            <param name="offset">The offset into the byte array.</param>
+            <param name="recordFactory">A factory for creating new escher records</param>
+            <returns>The number of bytes written.</returns>  
+        </member>
+        <member name="M:NPOI.DDF.EscherSpRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes to an existing byte array without serialization listener.
+            This is done by delegating to Serialize(int, byte[], EscherSerializationListener).
+            </summary>
+            <param name="offset">the offset within the data byte array.</param>
+            <param name="data"> the data array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpRecord.DecodeFlags(System.Int32)">
+            <summary>
+            Converts the shape flags into a more descriptive name.
+            </summary>
+            <param name="flags">The flags.</param>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpRecord.RecordId">
+            <summary>
+            @return  the 16 bit identifier for this record.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpRecord.ShapeId">
+            <summary>
+            Gets or sets A number that identifies this shape
+            </summary>
+            <value>The shape id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpRecord.Flags">
+            <summary>
+            The flags that apply to this shape.
+            </summary>
+            <value>The flags.</value>
+        </member>
+        <member name="T:NPOI.HSSF.Record.RecordFormatException">
+            <summary>
+            Used by records to indicate invalid format/data.
+            </summary>
+        </member>
+        <member name="T:NPOI.DDF.EscherPropertyMetaData">
+            <summary>
+            This class stores the type and description of an escher property.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherPropertyMetaData.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherPropertyMetaData"/> class.
+            </summary>
+            <param name="description">The description of the escher property.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherPropertyMetaData.#ctor(System.String,System.Byte)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherPropertyMetaData"/> class.
+            </summary>
+            <param name="description">The description of the escher property.</param>
+            <param name="type">The type of the property.</param> 
+        </member>
+        <member name="P:NPOI.DDF.EscherPropertyMetaData.Description">
+            <summary>
+            Gets the description.
+            </summary>
+            <value>The description.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPropertyMetaData.Type">
+            <summary>
+            Gets the type.
+            </summary>
+            <value>The type.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherBSERecord">
+            <summary>
+            The BSE record is related closely to the EscherBlipRecord and stores
+            extra information about the blip.  A blip record is actually stored inside
+            the BSE record even though the BSE record isn't actually a container record.
+            @author Glen Stampoultzis
+            @see EscherBlipRecord
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherBSERecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBSERecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.  
+            </summary>
+            <param name="offset">The offset into 
+            data to start writing the record data to</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBSERecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBSERecord.GetBlipType(System.Byte)">
+            <summary>
+            Retrieve the string representation given a blip id.
+            </summary>
+            <param name="b">The b.</param>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.BlipTypeWin32">
+            <summary>
+            Gets or sets the expected blip type under windows (failure to match this blip type will result in
+            Excel converting to this format).
+            </summary>
+            <value>The blip type win32.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.BlipTypeMacOS">
+            <summary>
+            Gets or sets the expected blip type under MacOS (failure to match this blip type will result in
+            Excel converting to this format).
+            </summary>
+            <value>The blip type mac OS.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.UID">
+            <summary>
+            Gets or sets 16 byte MD4 checksum.
+            </summary>
+            <value>The UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Tag">
+            <summary>
+            Gets or sets the tag. (Unused)
+            </summary>
+            <value>The tag.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Size">
+            <summary>
+            Gets or sets Blip size in stream..
+            </summary>
+            <value>The size.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Ref">
+            <summary>
+            Gets or sets the reference count of this blip.
+            </summary>
+            <value>The ref.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Offset">
+            <summary>
+            Gets or sets the offset in the delay stream..
+            </summary>
+            <value>The offset.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Usage">
+            <summary>
+            Defines the way this blip is used.
+            </summary>
+            <value>The usage.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Name">
+            <summary>
+            Gets or sets the blip name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Unused2">
+            <summary>
+            Gets or sets the unused2.
+            </summary>
+            <value>The unused2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.Unused3">
+            <summary>
+            Gets or sets the unused3.
+            </summary>
+            <value>The unused3.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.BlipRecord">
+            <summary>
+            Gets or sets the blip record.
+            </summary>
+            <value>The blip record.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBSERecord.RemainingData">
+            <summary>
+            Gets or sets any remaining data in this record.
+            </summary>
+            <value>The remaining data.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherComplexProperty">
+            <summary>
+            A complex property differs from a simple property in that the data can not fit inside a 32 bit
+            integer.  See the specification for more detailed information regarding exactly what is
+            stored here.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.#ctor(System.Int16,System.Byte[])">
+            <summary>
+            Create a complex property using the property id and a byte array containing the complex
+            data value.
+            </summary>
+            <param name="id"> The id consists of the property number, a flag indicating whether this is a blip id and a flag
+            indicating that this is a complex property.</param>
+            <param name="complexData">The value of this property.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.#ctor(System.Int16,System.Boolean,System.Byte[])">
+            <summary>
+            Create a complex property using the property number, a flag to indicate whether this is a
+            blip reference and the complex property data.
+            </summary>
+            <param name="propertyNumber">The property number.</param>
+            <param name="isBlipId">Whether this is a blip id.  Should be false.</param>
+            <param name="complexData">The value of this complex property.</param> 
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.SerializeSimplePart(System.Byte[],System.Int32)">
+            <summary>
+            Serializes the simple part of this property.  ie the first 6 bytes.
+            </summary>
+            <param name="data"></param>
+            <param name="pos"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.SerializeComplexPart(System.Byte[],System.Int32)">
+            <summary>
+            Serializes the complex part of this property
+            </summary>
+            <param name="data">The data array to Serialize to</param>
+            <param name="pos">The offset within data to start serializing to.</param>
+            <returns>The number of bytes Serialized.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.Equals(System.Object)">
+            <summary>
+            Determine whether this property is equal to another property.
+            </summary>
+            <param name="o">The object to compare to.</param>
+            <returns>True if the objects are equal.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherComplexProperty.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherComplexProperty.ComplexData">
+            <summary>
+            Gets the complex data.
+            </summary>
+            <value>The complex data.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherComplexProperty.PropertySize">
+            <summary>
+            Caclulates the number of bytes required to Serialize this property.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherSplitMenuColorsRecord">
+            <summary>
+            A list of the most recently used colours for the drawings contained in
+            this document.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherSplitMenuColorsRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSplitMenuColorsRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array
+            </summary>
+            <param name="offset">The offset into data
+             to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSplitMenuColorsRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+            @return  a string representation of this record.
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.RecordId">
+            <summary>
+            Return the current record id.
+            </summary>
+            <value>the 16 bit identifer for this record.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.RecordName">
+            <summary>
+            Gets the short name for this record
+            </summary>
+            <value>The name of the record.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.Color1">
+            <summary>
+            Gets or sets the color1.
+            </summary>
+            <value>The color1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.Color2">
+            <summary>
+            Gets or sets the color2.
+            </summary>
+            <value>The color2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.Color3">
+            <summary>
+            Gets or sets the color3.
+            </summary>
+            <value>The color3.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSplitMenuColorsRecord.Color4">
+            <summary>
+            Gets or sets the color4.
+            </summary>
+            <value>The color4.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherDggRecord">
+            <summary>
+            This record defines the drawing groups used for a particular sheet.
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherDggRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDggRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.
+            </summary>
+            <param name="offset">The offset into data to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDggRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDggRecord.AddCluster(System.Int32,System.Int32)">
+            <summary>
+            Adds the cluster.
+            </summary>
+            <param name="dgId">The dg id.</param>
+            <param name="numShapedUsed">The num shaped used.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherDggRecord.AddCluster(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Adds the cluster.
+            </summary>
+            <param name="dgId">id of the drawing group (stored in the record options)</param>
+            <param name="numShapedUsed">initial value of the numShapedUsed field</param>
+            <param name="sort">if set to <c>true</c> if true then sort clusters by drawing group id.(
+            In Excel the clusters are sorted but in PPT they are not).</param>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.RecordId">
+            <summary>
+            Return the current record id.
+            </summary>
+            <value>The 16 bit record id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.ShapeIdMax">
+            <summary>
+            Gets or sets the shape id max.
+            </summary>
+            <value>The shape id max.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.NumIdClusters">
+            <summary>
+            Gets the Number of id clusters + 1
+            </summary>
+            <value>The num id clusters.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.NumShapesSaved">
+            <summary>
+            Gets or sets the num shapes saved.
+            </summary>
+            <value>The num shapes saved.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.DrawingsSaved">
+            <summary>
+            Gets or sets the drawings saved.
+            </summary>
+            <value>The drawings saved.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.MaxDrawingGroupId">
+            <summary>
+            Gets or sets the max drawing group id.
+            </summary>
+            <value>The max drawing group id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDggRecord.FileIdClusters">
+            <summary>
+            Gets or sets the file id clusters.
+            </summary>
+            <value>The file id clusters.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherOptRecord">
+            <summary>
+            The opt record is used to store property values for a shape.  It is the key to determining
+            the attributes of a shape.  Properties can be of two types: simple or complex.  Simple types
+            are fixed Length.  Complex properties are variable Length.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array
+            </summary>
+            <param name="offset">The offset into data
+             to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.GetEscherProperty(System.Int32)">
+            <summary>
+            The list of properties stored by this record.
+            </summary>
+            <param name="index">The index.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.AddEscherProperty(NPOI.DDF.EscherProperty)">
+            <summary>
+            Add a property to this record.
+            </summary>
+            <param name="prop">The prop.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherOptRecord.SortProperties">
+            <summary>
+            Records should be sorted by property number before being stored.
+            </summary>
+        </member>
+        <member name="P:NPOI.DDF.EscherOptRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherOptRecord.Options">
+            <summary>
+            Automatically recalculate the correct option
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherOptRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherOptRecord.PropertiesSize">
+            <summary>
+            Gets the size of the properties.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherOptRecord.EscherProperties">
+            <summary>
+            The list of properties stored by this record.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:NPOI.DDF.DefaultEscherRecordFactory">
+            <summary>
+            Generates escher records when provided the byte array containing those records.
+            @author Glen Stampoultzis
+            @author Nick Burch   (nick at torchbox . com)
+            </summary>
+            <see cref="T:NPOI.DDF.EscherRecordFactory"/>
+        </member>
+        <member name="T:NPOI.DDF.EscherRecordFactory">
+            <summary>
+            The escher record factory interface allows for the creation of escher
+            records from a pointer into a data array.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherRecordFactory.CreateRecord(System.Byte[],System.Int32)">
+            <summary>
+            Create a new escher record from the data provided.  Does not attempt
+            to Fill the contents of the record however.
+            </summary>
+            <param name="data">The data.</param>
+            <param name="offset">The off set.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.DefaultEscherRecordFactory.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.DefaultEscherRecordFactory"/> class.
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.DefaultEscherRecordFactory.CreateRecord(System.Byte[],System.Int32)">
+            <summary>
+            Generates an escher record including the any children contained under that record.
+            An exception is thrown if the record could not be generated.
+            </summary>
+            <param name="data">The byte array containing the records</param>
+            <param name="offset">The starting offset into the byte array</param>
+            <returns>The generated escher record</returns>
+        </member>
+        <member name="M:NPOI.DDF.DefaultEscherRecordFactory.RecordsToMap(System.Type[])">
+            <summary>
+            Converts from a list of classes into a map that Contains the record id as the key and
+            the Constructor in the value part of the map.  It does this by using reflection to look up
+            the RECORD_ID field then using reflection again to find a reference to the constructor.
+            </summary>
+            <param name="records">The records to convert</param>
+            <returns>The map containing the id/constructor pairs.</returns>
+        </member>
+        <member name="T:NPOI.DDF.EscherDgRecord">
+            <summary>
+            This record simply holds the number of shapes in the drawing group and the
+            last shape id used for this drawing group.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherDgRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDgRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.
+            </summary>
+            <param name="offset"> The offset into data to start writing the record data to.</param>
+            <param name="data"> The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDgRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDgRecord.IncrementShapeCount">
+            <summary>
+            Increments the shape count.
+            </summary>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.RecordId">
+            <summary>
+            Return the current record id.
+            </summary>
+            <value>The 16 bit record id.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.RecordName">
+            <summary>
+             The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.NumShapes">
+            <summary>
+            Gets or sets The number of shapes in this drawing group.
+            </summary>
+            <value>The num shapes.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.LastMSOSPID">
+            <summary>
+            Gets or sets The last shape id used in this drawing group.
+            </summary>
+            <value>The last MSOSPID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherDgRecord.DrawingGroupId">
+            <summary>
+            Gets the drawing group id for this record.  This is encoded in the
+            instance part of the option record.
+            </summary>
+            <value>The drawing group id.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherPictBlip">
+            <summary>
+            @author Daniel Noll
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherPictBlip.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>
+            The number of bytes Read from the byte array.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherPictBlip.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes the record to an existing byte array.
+            </summary>
+            <param name="offset">the offset within the byte array</param>
+            <param name="data">the data array to Serialize to</param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherPictBlip.InflatePictureData(System.Byte[])">
+            <summary>
+            Decompresses the provided data, returning the inflated result.
+            </summary>
+            <param name="data">the deflated picture data.</param>
+            <returns>the inflated picture data.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherPictBlip.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.UID">
+            <summary>
+            Gets or sets the UID.
+            </summary>
+            <value>The UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.UncompressedSize">
+            <summary>
+            Gets or sets the size of the uncompressed.
+            </summary>
+            <value>The size of the uncompressed.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.Bounds">
+            <summary>
+            Gets or sets the bounds.
+            </summary>
+            <value>The bounds.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.SizeEMU">
+            <summary>
+            Gets or sets the size EMU.
+            </summary>
+            <value>The size EMU.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.CompressedSize">
+            <summary>
+            Gets or sets the size of the compressed.
+            </summary>
+            <value>The size of the compressed.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherPictBlip.IsCompressed">
+            <summary>
+            Gets a value indicating whether this instance is compressed.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is compressed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:NPOI.DDF.EscherBitmapBlip">
+            <summary>
+            @author Glen Stampoultzis
+            @version $Id: EscherBitmapBlip.java 569827 2007-08-26 15:26:29Z yegor $
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherBitmapBlip.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.    
+            </summary>
+            <param name="data"> The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into </param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBitmapBlip.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes the record to an existing byte array.
+            </summary>
+            <param name="offset">the offset within the byte array</param>
+            <param name="data">the data array to Serialize to</param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherBitmapBlip.ToString">
+            <summary>
+            Toes the string.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherBitmapBlip.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value> Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBitmapBlip.UID">
+            <summary>
+            Gets or sets the UID.
+            </summary>
+            <value>The UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBitmapBlip.Marker">
+            <summary>
+            Gets or sets the marker.
+            </summary>
+            <value>The marker.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherPropertyFactory">
+            <summary>
+            Generates a property given a reference into the byte array storing that property.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherPropertyFactory.CreateProperties(System.Byte[],System.Int32,System.Int16)">
+            <summary>
+            Create new properties from a byte array.
+            </summary>
+            <param name="data">The byte array containing the property</param>
+            <param name="offset">The starting offset into the byte array</param>
+            <param name="numProperties">The new properties</param>
+            <returns></returns>        
+        </member>
+        <member name="T:NPOI.DDF.EscherSpgrRecord">
+            <summary>
+            The spgr record defines information about a shape group.  Groups in escher
+            are simply another form of shape that you can't physically see.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpgrRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpgrRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array
+            </summary>
+            <param name="offset">The offset into data
+             to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherSpgrRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RecordId">
+            <summary>
+            Return the current record id.
+            </summary>
+            <value>The 16 bit identifier of this shape group record.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RectX1">
+            <summary>
+            Gets or sets the starting top-left coordinate of child records.
+            </summary>
+            <value>The rect x1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RectX2">
+            <summary>
+            Gets or sets the starting bottom-right coordinate of child records.
+            </summary>
+            <value>The rect x2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RectY1">
+            <summary>
+            Gets or sets the starting top-left coordinate of child records.
+            </summary>
+            <value>The rect y1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherSpgrRecord.RectY2">
+            <summary>
+            Gets or sets the starting bottom-right coordinate of child records.
+            </summary>
+            <value>The rect y2.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherClientAnchorRecord">
+            <summary>
+            The escher client anchor specifies which rows and cells the shape is bound to as well as
+            the offsets within those cells.  Each cell is 1024 units wide by 256 units long regardless
+            of the actual size of the cell.  The EscherClientAnchorRecord only applies to the top-most
+            shapes.  Shapes contained in groups are bound using the EscherChildAnchorRecords.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherClientAnchorRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherClientAnchorRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.
+            </summary>
+            <param name="offset">The offset into data to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherClientAnchorRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.RecordId">
+            <summary>
+            The record id for this record.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Flag">
+            <summary>
+            Gets or sets the flag.
+            </summary>
+            <value>0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Col1">
+            <summary>
+            Gets or sets The column number for the top-left position.  0 based.
+            </summary>
+            <value>The col1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Dx1">
+            <summary>
+            Gets or sets The x offset within the top-left cell.  Range is from 0 to 1023.
+            </summary>
+            <value>The DX1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Row1">
+            <summary>
+            Gets or sets The row number for the top-left corner of the shape.
+            </summary>
+            <value>The row1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Dy1">
+            <summary>
+            Gets or sets The y offset within the top-left corner of the current shape.
+            </summary>
+            <value>The dy1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Col2">
+            <summary>
+            Gets or sets The column of the bottom right corner of this shape.
+            </summary>
+            <value>The col2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Dx2">
+            <summary>
+            Gets or sets The x offset withing the cell for the bottom-right corner of this shape.
+            </summary>
+            <value>The DX2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Row2">
+            <summary>
+            Gets or sets The row number for the bottom-right corner of the current shape.
+            </summary>
+            <value>The row2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.Dy2">
+            <summary>
+            Gets or sets The y offset withing the cell for the bottom-right corner of this shape.
+            </summary>
+            <value>The dy2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherClientAnchorRecord.RemainingData">
+            <summary>
+            Gets or sets the remaining data.
+            </summary>
+            <value>The remaining data.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherClientDataRecord">
+            <summary>
+            The EscherClientDataRecord is used to store client specific data about the position of a
+            shape within a container.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherClientDataRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherClientDataRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+             This method Serializes this escher record into a byte array.
+            
+             @param offset   The offset into <c>data</c> to start writing the record data to.
+             @param data     The byte array to Serialize to.
+             @param listener A listener to retrieve start and end callbacks.  Use a <c>NullEscherSerailizationListener</c> to ignore these events.
+             @return The number of bytes written.
+             @see NullEscherSerializationListener
+        </member>
+        <member name="M:NPOI.DDF.EscherClientDataRecord.ToString">
+            Returns the string representation of this record.
+        </member>
+        <member name="P:NPOI.DDF.EscherClientDataRecord.RecordSize">
+             Returns the number of bytes that are required to Serialize this record.
+            
+             @return Number of bytes
+        </member>
+        <member name="P:NPOI.DDF.EscherClientDataRecord.RecordId">
+            Returns the identifier of this record.
+        </member>
+        <member name="P:NPOI.DDF.EscherClientDataRecord.RecordName">
+            The short name for this record
+        </member>
+        <member name="P:NPOI.DDF.EscherClientDataRecord.RemainingData">
+            Any data recording this record.
+        </member>
+        <member name="T:NPOI.DDF.EscherRGBProperty">
+            <summary>
+            A color property.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherRGBProperty.#ctor(System.Int16,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.DDF.EscherRGBProperty"/> class.
+            </summary>
+            <param name="propertyNumber">The property number.</param>
+            <param name="rgbColor">Color of the RGB.</param>
+        </member>
+        <member name="P:NPOI.DDF.EscherRGBProperty.RgbColor">
+            <summary>
+            Gets the color of the RGB.
+            </summary>
+            <value>The color of the RGB.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRGBProperty.Red">
+            <summary>
+            Gets the red.
+            </summary>
+            <value>The red.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRGBProperty.Green">
+            <summary>
+            Gets the green.
+            </summary>
+            <value>The green.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherRGBProperty.Blue">
+            <summary>
+            Gets the blue.
+            </summary>
+            <value>The blue.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherTextboxRecord">
+            <summary>
+            Holds data from the parent application. Most commonly used to store
+            text in the format of the parent application, rather than in
+            Escher format. We don't attempt to understand the contents, since
+            they will be in the parent's format, not Escher format.
+            @author Glen Stampoultzis (glens at apache.org)
+            @author Nick Burch  (nick at torchbox dot com)
+            </summary>
+        </member>
+        <member name="F:NPOI.DDF.EscherTextboxRecord.thedata">
+            The data for this record not including the the 8 byte header 
+        </member>
+        <member name="M:NPOI.DDF.EscherTextboxRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+             This method deserializes the record from a byte array.
+            
+             @param data          The byte array containing the escher record information
+             @param offset        The starting offset into <c>data</c>.
+             @param recordFactory May be null since this is not a container record.
+             @return The number of bytes Read from the byte array.
+        </member>
+        <member name="M:NPOI.DDF.EscherTextboxRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Writes this record and any contained records to the supplied byte
+            </summary>
+            <param name="offset"></param>
+            <param name="data"></param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherTextboxRecord.SetData(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Sets the extra data (in the parent application's format) to be
+            contained by the record. Used when the parent application changes
+            the contents.
+            </summary>
+            <param name="b">The b.</param>
+            <param name="start">The start.</param>
+            <param name="Length">The length.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherTextboxRecord.SetData(System.Byte[])">
+            <summary>
+            Sets the data.
+            </summary>
+            <param name="b">The b.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherTextboxRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherTextboxRecord.Data">
+            <summary>
+            Returns any extra data associated with this record.  In practice excel
+            does not seem to put anything here, but with PowerPoint this will
+            contain the bytes that make up a TextHeaderAtom followed by a
+            TextBytesAtom/TextCharsAtom
+            </summary>
+            <value>The data.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherTextboxRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherTextboxRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:NPOI.DDF.EscherMetafileBlip">
+            <summary>
+            @author Daniel Noll
+            </summary>
+        </member>
+        <member name="F:NPOI.DDF.EscherMetafileBlip.SIGNATURE_EMF">
+            BLIP signatures as defined in the escher spec
+        </member>
+        <member name="F:NPOI.DDF.EscherMetafileBlip.field_2_UID">
+            The primary UID is only saved to disk if (blip_instance ^ blip_signature == 1)
+        </member>
+        <member name="M:NPOI.DDF.EscherMetafileBlip.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>
+            The number of bytes Read from the byte array.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherMetafileBlip.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes the record to an existing byte array.
+            </summary>
+            <param name="offset">the offset within the byte array</param>
+            <param name="data">the data array to Serialize to</param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherMetafileBlip.InflatePictureData(System.Byte[])">
+            <summary>
+            Decompresses the provided data, returning the inflated result.
+            </summary>
+            <param name="data">the deflated picture data.</param>
+            <returns>the inflated picture data.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherMetafileBlip.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.UID">
+            <summary>
+            Gets or sets the UID.
+            </summary>
+            <value>The UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.PrimaryUID">
+            <summary>
+            Gets or sets the primary UID.
+            </summary>
+            <value>The primary UID.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.UncompressedSize">
+            <summary>
+            Gets or sets the size of the uncompressed.
+            </summary>
+            <value>The size of the uncompressed.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.Bounds">
+            <summary>
+            Gets or sets the bounds.
+            </summary>
+            <value>The bounds.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.SizeEMU">
+            <summary>
+            Gets or sets the size EMU.
+            </summary>
+            <value>The size EMU.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.CompressedSize">
+            <summary>
+            Gets or sets the size of the compressed.
+            </summary>
+            <value>The size of the compressed.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.IsCompressed">
+            <summary>
+            Gets or sets a value indicating whether this instance is compressed.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is compressed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:NPOI.DDF.EscherMetafileBlip.Signature">
+            <summary>
+            Return the blip signature
+            </summary>
+            <value>the blip signature</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherProperties">
+            <summary>
+            Provides a list of all known escher properties including the description and
+            type.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.InitProps">
+            <summary>
+            Inits the props.
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.AddProp(System.Int32,NPOI.DDF.EscherPropertyMetaData)">
+            <summary>
+            Adds the prop.
+            </summary>
+            <param name="s">The s.</param>
+            <param name="data">The data.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.GetData(System.String,System.Byte)">
+            <summary>
+            Gets the data.
+            </summary>
+            <param name="propName">Name of the prop.</param>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.GetData(System.String)">
+            <summary>
+            Gets the data.
+            </summary>
+            <param name="propName">Name of the prop.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.GetPropertyName(System.Int16)">
+            <summary>
+            Gets the name of the property.
+            </summary>
+            <param name="propertyId">The property id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherProperties.GetPropertyType(System.Int16)">
+            <summary>
+            Gets the type of the property.
+            </summary>
+            <param name="propertyId">The property id.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NPOI.DDF.EscherChildAnchorRecord">
+            <summary>
+            The escher child achor record is used to specify the position of a shape under an
+            existing group.  The first level of shape records use a EscherClientAnchor record instead.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherChildAnchorRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data">The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data</param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherChildAnchorRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            This method Serializes this escher record into a byte array.
+            </summary>
+            <param name="offset">The offset into data to start writing the record data to.</param>
+            <param name="data">The byte array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherChildAnchorRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.RecordId">
+            <summary>
+            The record id for the EscherChildAnchorRecord.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.Dx1">
+            <summary>
+            Gets or sets offset within the parent coordinate space for the top left point.
+            </summary>
+            <value>The DX1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.Dy1">
+            <summary>
+            Gets or sets the offset within the parent coordinate space for the top left point.
+            </summary>
+            <value>The dy1.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.Dx2">
+            <summary>
+            Gets or sets the offset within the parent coordinate space for the bottom right point.
+            </summary>
+            <value>The DX2.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherChildAnchorRecord.Dy2">
+            <summary>
+            Gets or sets the offset within the parent coordinate space for the bottom right point.
+            </summary>
+            <value>The dy2.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherDump">
+            <summary>
+            Used to dump the contents of escher records to a PrintStream.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.Dump(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Decodes the escher stream from a byte array and dumps the results to
+            a print stream.
+            </summary>
+            <param name="data">The data array containing the escher records.</param>
+            <param name="offset">The starting offset within the data array.</param>
+            <param name="size">The number of bytes to Read.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.DumpOld(System.Int64,System.IO.Stream)">
+            <summary>
+            This version of dump is a translation from the open office escher dump routine.
+            </summary>
+            <param name="maxLength">The number of bytes to Read</param>
+            <param name="in1">An input stream to Read from.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.PropertyName(System.Int16)">
+            <summary>
+            Returns a property name given a property id.  This is used only by the
+            old escher dump routine.
+            </summary>
+            <param name="propertyId">The property number for the name</param>
+            <returns>A descriptive name.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.GetBlipType(System.Byte)">
+            <summary>
+            Returns the blip description given a blip id.
+            </summary>
+            <param name="b">blip id</param>
+            <returns> A description.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.Dec1616(System.Int32)">
+            <summary>
+            Straight conversion from OO.  Converts a type of float.
+            </summary>
+            <param name="n32">The N32.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.OutHex(System.Int32,System.IO.Stream)">
+            <summary>
+            Dumps out a hex value by Reading from a input stream.
+            </summary>
+            <param name="bytes">How many bytes this hex value consists of.</param>
+            <param name="in1">The stream to Read the hex value from.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherDump.Dump(System.Int32,System.Byte[])">
+            <summary>
+            Dumps the specified record size.
+            </summary>
+            <param name="recordSize">Size of the record.</param>
+            <param name="data">The data.</param>
+        </member>
+        <member name="T:NPOI.DDF.EscherArrayProperty">
+            <summary>
+            Escher array properties are the most wierd construction ever invented
+            with all sorts of special cases.  I'm hopeful I've got them all.
+            @author Glen Stampoultzis (glens at superlinksoftware.com)
+            </summary>
+        </member>
+        <member name="F:NPOI.DDF.EscherArrayProperty.FIXED_SIZE">
+            The size of the header that goes at the
+             start of the array, before the data
+        </member>
+        <member name="F:NPOI.DDF.EscherArrayProperty.sizeIncludesHeaderSize">
+            Normally, the size recorded in the simple data (for the complex
+             data) includes the size of the header.
+            There are a few cases when it doesn't though...
+        </member>
+        <member name="F:NPOI.DDF.EscherArrayProperty.emptyComplexPart">
+            When Reading a property from data stream remeber if the complex part is empty and Set this flag.
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.GetElement(System.Int32)">
+            <summary>
+            Gets the element.
+            </summary>
+            <param name="index">The index.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.SetElement(System.Int32,System.Byte[])">
+            <summary>
+            Sets the element.
+            </summary>
+            <param name="index">The index.</param>
+            <param name="element">The element.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.ToString">
+            <summary>
+            Retrieves the string representation for this property.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.SetArrayData(System.Byte[],System.Int32)">
+            <summary>
+            We have this method because the way in which arrays in escher works
+            is screwed for seemly arbitary reasons.  While most properties are
+            fairly consistent and have a predictable array size, escher arrays
+            have special cases.
+            </summary>
+            <param name="data">The data array containing the escher array information</param>
+            <param name="offset">The offset into the array to start Reading from.</param>
+            <returns>the number of bytes used by this complex property.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.SerializeSimplePart(System.Byte[],System.Int32)">
+            <summary>
+            Serializes the simple part of this property.  ie the first 6 bytes.
+            Needs special code to handle the case when the size doesn't
+            include the size of the header block
+            </summary>
+            <param name="data"></param>
+            <param name="pos"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherArrayProperty.GetActualSizeOfElements(System.Int16)">
+            <summary>
+            Sometimes the element size is stored as a negative number.  We
+            negate it and shift it to Get the real value.
+            </summary>
+            <param name="sizeOfElements">The size of elements.</param>
+            <returns></returns>
+        </member>
+        <member name="T:NPOI.DDF.EscherBoolProperty">
+            <summary>
+            Represents a bool property.  The actual utility of this property is in doubt because many
+            of the properties marked as bool seem to actually contain special values.  In other words
+            they're not true bools.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherBoolProperty.#ctor(System.Int16,System.Int32)">
+            <summary>
+            Create an instance of an escher bool property.
+            </summary>
+            <param name="propertyNumber">The property number (or id)</param>
+            <param name="value">The 32 bit value of this bool property</param>
+        </member>
+        <member name="P:NPOI.DDF.EscherBoolProperty.IsTrue">
+            <summary>
+            Whether this bool property is true
+            </summary>
+            <value><c>true</c> if this instance is true; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherBoolProperty.IsFalse">
+            <summary>
+            Whether this bool property is false
+            </summary>
+            <value><c>true</c> if this instance is false; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:NPOI.DDF.EscherContainerRecord">
+            <summary>
+            Escher container records store other escher records as children.
+            The container records themselves never store any information beyond
+            the standard header used by all escher records.  This one record is
+            used to represent many different types of records.
+            @author Glen Stampoultzis
+            </summary>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            The contract of this method is to deSerialize an escher record including
+            it's children.
+            </summary>
+            <param name="data">The byte array containing the Serialized escher
+            records.</param>
+            <param name="offset">The offset into the byte array.</param>
+            <param name="recordFactory">A factory for creating new escher records</param>
+            <returns>The number of bytes written.</returns>        
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Serializes to an existing byte array without serialization listener.
+            This is done by delegating to Serialize(int, byte[], EscherSerializationListener).
+            </summary>
+            <param name="offset">the offset within the data byte array.</param>
+            <param name="data"> the data array to Serialize to.</param>
+            <returns>The number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.HasChildOfType(System.Int16)">
+            <summary>
+            Do any of our (top level) children have the
+            given recordId?
+            </summary>
+            <param name="recordId">The record id.</param>
+            <returns>
+            	<c>true</c> if [has child of type] [the specified record id]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.Display(System.Int32)">
+            <summary>
+            The display methods allows escher variables to print the record names
+            according to their hierarchy.
+            </summary>
+            <param name="indent">The current indent level.</param> 
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.AddChildRecord(NPOI.DDF.EscherRecord)">
+            <summary>
+            Adds the child record.
+            </summary>
+            <param name="record">The record.</param>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.ToString(System.String)">
+            <summary>
+            Toes the string.
+            </summary>
+            <param name="indent">The indent.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.GetChildById(System.Int16)">
+            <summary>
+            Gets the child by id.
+            </summary>
+            <param name="recordId">The record id.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.DDF.EscherContainerRecord.GetRecordsById(System.Int16,System.Collections.ArrayList@)">
+            <summary>
+            Recursively find records with the specified record ID
+            </summary>
+            <param name="recordId"></param>
+            <param name="out1">list to store found records</param>
+        </member>
+        <member name="P:NPOI.DDF.EscherContainerRecord.RecordSize">
+            <summary>
+            Subclasses should effeciently return the number of bytes required to
+            Serialize the record.
+            </summary>
+            <value>number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherContainerRecord.ChildRecords">
+            <summary>
+            Returns a list of all the child (escher) records
+            of the container.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.EscherContainerRecord.ChildContainers">
+            <summary>
+            Returns all of our children which are also
+            EscherContainers (may be 0, 1, or vary rarely
+            2 or 3)
+            </summary>
+            <value>The child containers.</value>
+        </member>
+        <member name="P:NPOI.DDF.EscherContainerRecord.RecordName">
+            <summary>
+            Subclasses should return the short name for this escher record.
+            </summary>
+            <value></value>
+        </member>
+        <member name="T:NPOI.DDF.UnknownEscherRecord">
+            <summary>
+            This record is used whenever a escher record is encountered that
+            we do not explicitly support.
+            @author Glen Stampoultzis (glens at apache.org)
+            </summary>
+        </member>
+        <member name="F:NPOI.DDF.UnknownEscherRecord.thedata">
+            The data for this record not including the the 8 byte header 
+        </member>
+        <member name="M:NPOI.DDF.UnknownEscherRecord.FillFields(System.Byte[],System.Int32,NPOI.DDF.EscherRecordFactory)">
+            <summary>
+            This method deSerializes the record from a byte array.
+            </summary>
+            <param name="data"> The byte array containing the escher record information</param>
+            <param name="offset">The starting offset into data </param>
+            <param name="recordFactory">May be null since this is not a container record.</param>
+            <returns>The number of bytes Read from the byte array.</returns>
+        </member>
+        <member name="M:NPOI.DDF.UnknownEscherRecord.Serialize(System.Int32,System.Byte[],NPOI.DDF.EscherSerializationListener)">
+            <summary>
+            Writes this record and any contained records to the supplied byte
+            array.
+            </summary>
+            <param name="offset"></param>
+            <param name="data"></param>
+            <returns>the number of bytes written.</returns>
+        </member>
+        <member name="M:NPOI.DDF.UnknownEscherRecord.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:NPOI.DDF.UnknownEscherRecord.AddChildRecord(NPOI.DDF.EscherRecord)">
+            <summary>
+            Adds the child record.
+            </summary>
+            <param name="childRecord">The child record.</param>
+        </member>
+        <member name="P:NPOI.DDF.UnknownEscherRecord.Data">
+            <summary>
+            Gets the data.
+            </summary>
+            <value>The data.</value>
+        </member>
+        <member name="P:NPOI.DDF.UnknownEscherRecord.RecordSize">
+            <summary>
+            Returns the number of bytes that are required to Serialize this record.
+            </summary>
+            <value>Number of bytes</value>
+        </member>
+        <member name="P:NPOI.DDF.UnknownEscherRecord.ChildRecords">
+            <summary>
+            Returns the children of this record.  By default this will
+            be an empty list.  EscherCotainerRecord is the only record
+            that may contain children.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:NPOI.DDF.UnknownEscherRecord.RecordName">
+            <summary>
+            The short name for this record
+            </summary>
+            <value></value>
+        </member>
+    </members>
+</doc>

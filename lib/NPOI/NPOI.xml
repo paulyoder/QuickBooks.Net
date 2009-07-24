@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NPOI</name>
+    </assembly>
+    <members>
+        <member name="T:NPOI.HPSF.Extractor.HPSFPropertiesExtractor">
+            <summary>
+            Extracts all of the HPSF properties, both
+            build in and custom, returning them in
+            textual form.
+            </summary>
+        </member>
+        <member name="T:NPOI.POITextExtractor">
+            <summary>
+            Common Parent for Text Extractors
+            of POI Documents.
+            You will typically find the implementation of
+            a given format's text extractor under
+            org.apache.poi.[format].extractor .
+            </summary>
+            @see org.apache.poi.hssf.extractor.ExcelExtractor
+            @see org.apache.poi.hslf.extractor.PowerPointExtractor
+            @see org.apache.poi.hdgf.extractor.VisioTextExtractor
+            @see org.apache.poi.hwpf.extractor.WordExtractor
+        </member>
+        <member name="F:NPOI.POITextExtractor.document">
+            The POIDocument that's open 
+        </member>
+        <member name="M:NPOI.POITextExtractor.#ctor(NPOI.POIDocument)">
+            <summary>
+            Creates a new text extractor for the given document
+            </summary>
+            <param name="document">The document.</param>
+        </member>
+        <member name="M:NPOI.POITextExtractor.#ctor(NPOI.POITextExtractor)">
+            <summary>
+            Creates a new text extractor, using the same
+            document as another text extractor. Normally
+            only used by properties extractors.
+            </summary>
+            <param name="otherExtractor">The other extractor.</param>
+        </member>
+        <member name="P:NPOI.POITextExtractor.Text">
+            <summary>
+            Retrieves all the text from the document.
+            How cells, paragraphs etc are separated in the text
+            is implementation specific - see the javadocs for
+            a specific project for details.
+            </summary>
+            <value>All the text from the document.</value>
+        </member>
+        <member name="P:NPOI.POITextExtractor.MetadataTextExtractor">
+            <summary>
+            Returns another text extractor, which is able to
+            output the textual content of the document
+            metadata / properties, such as author and title.
+            </summary>
+            <value>The metadata text extractor.</value>
+        </member>
+        <member name="M:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.GetPropertiesText(NPOI.HPSF.SpecialPropertySet)">
+            <summary>
+            Gets the properties text.
+            </summary>
+            <param name="ps">The ps.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.GetPropertyValueText(System.Object)">
+            <summary>
+            Gets the property value text.
+            </summary>
+            <param name="val">The val.</param>
+            <returns></returns>
+        </member>
+        <member name="P:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.DocumentSummaryInformationText">
+            <summary>
+            Gets the document summary information text.
+            </summary>
+            <value>The document summary information text.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.SummaryInformationText">
+            <summary>
+            Gets the summary information text.
+            </summary>
+            <value>The summary information text.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.Text">
+            <summary>
+            Return the text of all the properties defined in
+            the document.
+            </summary>
+            <value>All the text from the document.</value>
+        </member>
+        <member name="P:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.MetadataTextExtractor">
+            <summary>
+            Returns another text extractor, which is able to
+            output the textual content of the document
+            metadata / properties, such as author and title.
+            </summary>
+            <value>The metadata text extractor.</value>
+        </member>
+        <member name="T:NPOI.HPSF.Extractor.HPSFPropertiesExtractor.PropertiesOnlyDocument">
+            <summary>
+            So we can get at the properties of any
+            random OLE2 document.
+            </summary>
+        </member>
+        <member name="T:NPOI.POIDocument">
+            <summary>
+            This holds the common functionality for all POI
+            Document classes.
+            Currently, this relates to Document Information Properties
+            </summary>
+            <remarks>@author Nick Burch</remarks>
+        </member>
+        <member name="F:NPOI.POIDocument.sInf">
+            Holds metadata on our document 
+        </member>
+        <member name="F:NPOI.POIDocument.dsInf">
+            Holds further metadata on our document 
+        </member>
+        <member name="F:NPOI.POIDocument.filesystem">
+            The open POIFS FileSystem that contains our document 
+        </member>
+        <member name="F:NPOI.POIDocument.directory">
+            The directory that our document lives in 
+        </member>
+        <member name="F:NPOI.POIDocument.initialized">
+            For our own logging use 
+        </member>
+        <member name="M:NPOI.POIDocument.#ctor(NPOI.POIFS.FileSystem.DirectoryNode,NPOI.POIFS.FileSystem.POIFSFileSystem)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.POIDocument"/> class.
+            </summary>
+            <param name="dir">The dir.</param>
+            <param name="fs">The fs.</param>
+        </member>
+        <member name="M:NPOI.POIDocument.#ctor(NPOI.POIFS.FileSystem.POIFSFileSystem)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NPOI.POIDocument"/> class.
+            </summary>
+            <param name="fs">The fs.</param>
+        </member>
+        <member name="M:NPOI.POIDocument.ReadProperties">
+            <summary>
+            Find, and Create objects for, the standard
+            Documment Information Properties (HPSF).
+            If a given property Set is missing or corrupt,
+            it will remain null;
+            </summary>
+        </member>
+        <member name="M:NPOI.POIDocument.GetPropertySet(System.String)">
+            <summary>
+            For a given named property entry, either return it or null if
+            if it wasn't found
+            </summary>
+            <param name="SetName">Name of the set.</param>
+            <returns></returns>
+        </member>
+        <member name="M:NPOI.POIDocument.WriteProperties(NPOI.POIFS.FileSystem.POIFSFileSystem)">
+            <summary>
+            Writes out the standard Documment Information Properties (HPSF)
+            </summary>
+            <param name="outFS">the POIFSFileSystem to Write the properties into</param>
+        </member>
+        <member name="M:NPOI.POIDocument.WriteProperties(NPOI.POIFS.FileSystem.POIFSFileSystem,System.Collections.IList)">
+            <summary>
+            Writes out the standard Documment Information Properties (HPSF)
+            </summary>
+            <param name="outFS">the POIFSFileSystem to Write the properties into.</param>
+            <param name="writtenEntries">a list of POIFS entries to Add the property names too.</param>
+        </member>
+        <member name="M:NPOI.POIDocument.WritePropertySet(System.String,NPOI.HPSF.PropertySet,NPOI.POIFS.FileSystem.POIFSFileSystem)">
+            <summary>
+            Writes out a given ProperySet
+            </summary>
+            <param name="name">the (POIFS Level) name of the property to Write.</param>
+            <param name="Set">the PropertySet to Write out.</param>
+            <param name="outFS">the POIFSFileSystem to Write the property into.</param>
+        </member>
+        <member name="M:NPOI.POIDocument.Write(System.IO.Stream)">
+            <summary>
+            Writes the document out to the specified output stream
+            </summary>
+            <param name="out1">The out1.</param>
+        </member>
+        <member name="M:NPOI.POIDocument.CopyNodes(NPOI.POIFS.FileSystem.POIFSFileSystem,NPOI.POIFS.FileSystem.POIFSFileSystem,System.Collections.IList)">
+            <summary>
+            Copies nodes from one POIFS to the other minus the excepts
+            </summary>
+            <param name="source">the source POIFS to copy from.</param>
+            <param name="target">the target POIFS to copy to</param>
+            <param name="excepts">a list of Strings specifying what nodes NOT to copy</param>
+        </member>
+        <member name="M:NPOI.POIDocument.isInList(System.String,System.Collections.IList)">
+            <summary>
+            Checks to see if the String is in the list, used when copying
+            nodes between one POIFS and another
+            </summary>
+            <param name="entry">The entry.</param>
+            <param name="list">The list.</param>
+            <returns>
+            	<c>true</c> if [is in list] [the specified entry]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:NPOI.POIDocument.CopyNodeRecursively(NPOI.POIFS.FileSystem.Entry,NPOI.POIFS.FileSystem.DirectoryEntry)">
+            <summary>
+            Copies an Entry into a target POIFS directory, recursively
+            </summary>
+            <param name="entry">The entry.</param>
+            <param name="target">The target.</param>
+        </member>
+        <member name="P:NPOI.POIDocument.DocumentSummaryInformation">
+            <summary>
+            Fetch the Document Summary Information of the document
+            </summary>
+            <value>The document summary information.</value>
+        </member>
+        <member name="P:NPOI.POIDocument.SummaryInformation">
+            <summary>
+            Fetch the Summary Information of the document
+            </summary>
+            <value>The summary information.</value>
+        </member>
+        <member name="T:NPOI.POIOLE2TextExtractor">
+            <summary>
+            Common Parent for OLE2 based Text Extractors
+            of POI Documents, such as .doc, .xls
+            You will typically find the implementation of
+            a given format's text extractor under NPOI.Format.Extractor
+            </summary>
+            <remarks>
+            @see org.apache.poi.hssf.extractor.ExcelExtractor
+            @see org.apache.poi.hslf.extractor.PowerPointExtractor
+            @see org.apache.poi.hdgf.extractor.VisioTextExtractor
+            @see org.apache.poi.hwpf.extractor.WordExtractor
+            </remarks>
+        </member>
+        <member name="M:NPOI.POIOLE2TextExtractor.#ctor(NPOI.POIDocument)">
+            <summary>
+            Creates a new text extractor for the given document
+            </summary>
+            <param name="document"></param>
+        </member>
+        <member name="P:NPOI.POIOLE2TextExtractor.DocSummaryInformation">
+            <summary>
+            Returns the document information metadata for the document
+            </summary>
+            <value>The doc summary information.</value>
+        </member>
+        <member name="P:NPOI.POIOLE2TextExtractor.SummaryInformation">
+            <summary>
+            Returns the summary information metadata for the document
+            </summary>
+            <value>The summary information.</value>
+        </member>
+        <member name="P:NPOI.POIOLE2TextExtractor.MetadataTextExtractor">
+            <summary>
+            Returns an HPSF powered text extractor for the
+            document properties metadata, such as title and author.
+            </summary>
+            <value></value>
+        </member>
+    </members>
+</doc>
