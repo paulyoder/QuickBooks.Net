@@ -38,7 +38,7 @@ namespace QuickBooks.Net.Reports
 
         public virtual IReturnReport ReportPeriodDateMacro(string dateMacro)
         {
-            AddUpdateMessage("ReportPeriod", "ReportDateMacro", dateMacro);
+            AddUpdateMessage("ReportDateMacro", dateMacro);
             return _returnReport;
         }
 
