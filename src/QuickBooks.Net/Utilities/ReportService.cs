@@ -15,11 +15,7 @@ namespace QuickBooks.Net.Utilities
     {
         HSSFWorkbook _workbook;
         HSSFFont _boldFont;
-
-        public ReportService()
-        {
-            InitializeWorkbook();
-        }
+        HSSFCellStyle _boldAllBorders;
 
         public void AddReport(Report r, string sheetName)
         {
@@ -33,13 +29,11 @@ namespace QuickBooks.Net.Utilities
             var file = new FileStream(fileName, System.IO.FileMode.Create);
             _workbook.Write(file);
             file.Close();
-            InitializeWorkbook();
         }
 
         public void Save(Stream stream)
         {
             _workbook.Write(stream);
-            InitializeWorkbook();
         }
 
         private void CreateReportData(HSSFSheet sheet, Report r)
@@ -84,17 +78,6 @@ namespace QuickBooks.Net.Utilities
 
         private void CreateReportHeader(HSSFSheet sheet, Report r)
         {
-            var boldAllBorders = _workbook.CreateCellStyle();
-            boldAllBorders.BorderTop = HSSFCellStyle.BORDER_THIN;
-            boldAllBorders.TopBorderColor = HSSFColor.BLACK.index;
-            boldAllBorders.BorderBottom = HSSFCellStyle.BORDER_THIN;
-            boldAllBorders.BorderLeft = HSSFCellStyle.BORDER_THIN;
-            boldAllBorders.BorderRight = HSSFCellStyle.BORDER_THIN;
-            boldAllBorders.BottomBorderColor = HSSFColor.BLACK.index;
-            boldAllBorders.LeftBorderColor = HSSFColor.BLACK.index;
-            boldAllBorders.RightBorderColor = HSSFColor.BLACK.index;
-            boldAllBorders.SetFont(_boldFont);
-
             var row = sheet.CreateRow(0);
             for (int i = 0; i < r.ColumnDescriptions.Count(); i++)
             {
@@ -104,11 +87,37 @@ namespace QuickBooks.Net.Utilities
                     column.Titles.First();
                 var cell = row.CreateCell(i);
                 cell.SetCellValue(value);
-                cell.CellStyle = boldAllBorders;
+                cell.CellStyle = _boldAllBorders;
             }
         }
 
-        public void InitializeWorkbook()
+        protected void OnNewWorkbook()
+        {
+            _boldFont = _workbook.CreateFont();
+            _boldFont.Boldweight = HSSFFont.BOLDWEIGHT_BOLD;
+
+            _boldAllBorders = _workbook.CreateCellStyle();
+            _boldAllBorders.BorderTop = HSSFCellStyle.BORDER_THIN;
+            _boldAllBorders.TopBorderColor = HSSFColor.BLACK.index;
+            _boldAllBorders.BorderBottom = HSSFCellStyle.BORDER_THIN;
+            _boldAllBorders.BorderLeft = HSSFCellStyle.BORDER_THIN;
+            _boldAllBorders.BorderRight = HSSFCellStyle.BORDER_THIN;
+            _boldAllBorders.BottomBorderColor = HSSFColor.BLACK.index;
+            _boldAllBorders.LeftBorderColor = HSSFColor.BLACK.index;
+            _boldAllBorders.RightBorderColor = HSSFColor.BLACK.index;
+            _boldAllBorders.SetFont(_boldFont);
+        }
+
+        public void OpenWorkbook(string fileName)
+        {
+            using (var file = new FileStream(fileName, System.IO.FileMode.Open, FileAccess.Read))
+            {
+                _workbook = new HSSFWorkbook(file);
+            }
+            OnNewWorkbook();
+        }
+
+        public void NewWorkbook()
         {
             _workbook = new HSSFWorkbook();
 
@@ -122,8 +131,7 @@ namespace QuickBooks.Net.Utilities
             si.Subject = "QuickBooks.NET";
             _workbook.SummaryInformation = si;
 
-            _boldFont = _workbook.CreateFont();
-            _boldFont.Boldweight = HSSFFont.BOLDWEIGHT_BOLD;
+            OnNewWorkbook();
         }
     }
 }
