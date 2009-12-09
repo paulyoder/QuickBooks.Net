@@ -10,8 +10,8 @@ namespace QuickBooks.Net.Domain
     public class JournalEntry
     {
         public string TxnID { get; set; }
-        public string TimeCreated { get; set; }
-        public string TimeModified { get; set; }
+        public DateTime TimeCreated { get; set; }
+        public DateTime TimeModified { get; set; }
         public string EditSequence { get; set; }
         public int TxnNumber { get; set; }
         public DateTime TxnDate { get; set; }

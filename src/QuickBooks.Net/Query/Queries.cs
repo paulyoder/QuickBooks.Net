@@ -25,6 +25,17 @@ namespace QuickBooks.Net.Query
             }
         }
 
+        protected IBillQuery _bill;
+        public IBillQuery Bill
+        {
+            get
+            {
+                if (_bill == null)
+                    _bill = new BillQuery(_session);
+                return _bill;
+            }
+        }
+
         protected IClassQuery _class;
         public IClassQuery Class
         {
@@ -33,6 +44,17 @@ namespace QuickBooks.Net.Query
                 if (_class == null)
                     _class = new ClassQuery(_session);
                 return _class;
+            }
+        }
+
+        protected ICheckQuery _check;
+        public ICheckQuery Check
+        {
+            get
+            {
+                if (_check == null)
+                    _check = new CheckQuery(_session);
+                return _check;
             }
         }
 
@@ -55,6 +77,17 @@ namespace QuickBooks.Net.Query
                 if (_creditCardCharge == null)
                     _creditCardCharge = new CreditCardChargeQuery(_session);
                 return _creditCardCharge;
+            }
+        }
+
+        protected ICreditCardCreditQuery _creditCardCredit;
+        public ICreditCardCreditQuery CreditCardCredit
+        {
+            get
+            {
+                if (_creditCardCredit == null)
+                    _creditCardCredit = new CreditCardCreditQuery(_session);
+                return _creditCardCredit;
             }
         }
 

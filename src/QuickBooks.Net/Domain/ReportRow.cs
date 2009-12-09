@@ -22,7 +22,8 @@ namespace QuickBooks.Net.Domain
             RowValue = "";
             if (xml.Name == "TextRow")
             {
-                RowValue = xml.Attribute("value").Value;
+                if (xml.Attribute("value") != null)
+                    RowValue = xml.Attribute("value").Value;
                 Columns = new List<ReportColumn>();
             }
             else
