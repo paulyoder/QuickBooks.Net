@@ -67,5 +67,14 @@ namespace QuickBooks.Net.Domain
                 }
             }
         }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach (var column in Columns)
+                sb.AppendFormat("{0}: {1},", _columnDescriptions.Where(x => x.Id == column.Id).Single().ColumnType, column.Value);
+
+            return sb.ToString();
+        }
     }
 }
