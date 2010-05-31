@@ -12,9 +12,12 @@ namespace QuickBooks.Net.Utilities.ConversionExtensions
             return date.ToString("yyyy-MM-dd");
         }
 
-        public static T As<T>(this object @object)
+        public static T As<T>(this object value)
         {
-            return (T)Convert.ChangeType(@object, typeof(T));
+            if (String.IsNullOrEmpty(value.ToString()))
+                return default(T);
+            else
+                return (T)Convert.ChangeType(value, typeof(T));
         }
 
         public static List<T> Ad<T>(this List<T> list, T item)
