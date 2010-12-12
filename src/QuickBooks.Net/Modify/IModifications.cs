@@ -9,5 +9,6 @@ namespace QuickBooks.Net.Modify
     public interface IModifications
     {
         IJournalEntryMod JournalEntry { get; }
+        ICustomerMod Customer { get; }
     }
 }

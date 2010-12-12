@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,6 +12,11 @@
     <AssemblyName>QuickBooks.Net</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,30 +44,6 @@
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\lib\log4net\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.DDF, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.DDF.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.HPSF, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.HPSF.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.HSSF, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.HSSF.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.POIFS, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.POIFS.dll</HintPath>
-    </Reference>
-    <Reference Include="NPOI.Util, Version=1.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NPOI\NPOI.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -117,6 +98,8 @@
     <Compile Include="Domain\Vendor.cs" />
     <Compile Include="FileMode.cs" />
     <Compile Include="IQBSessionFactory.cs" />
+    <Compile Include="Modify\CustomerMod.cs" />
+    <Compile Include="Modify\ICustomerMod.cs" />
     <Compile Include="Modify\IJournalEntryMod.cs" />
     <Compile Include="Modify\IModifications.cs" />
     <Compile Include="Modify\JournalEntryMod.cs" />
@@ -187,7 +170,6 @@
     <Compile Include="Utilities\ConversionExtensions.cs" />
     <Compile Include="Utilities\ElementPosition.cs" />
     <Compile Include="Utilities\QBXMLBase.cs" />
-    <Compile Include="Utilities\ReportService.cs" />
     <Compile Include="Utilities\XElementBase.cs" />
   </ItemGroup>
   <ItemGroup>

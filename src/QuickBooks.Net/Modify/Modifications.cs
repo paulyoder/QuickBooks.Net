@@ -24,5 +24,16 @@ namespace QuickBooks.Net.Modify
                 return _journalMod;
             }
         }
+
+        protected ICustomerMod _customerMod;
+        public ICustomerMod Customer
+        {
+            get
+            {
+                if (_customerMod == null)
+                    _customerMod = new CustomerMod(_session);
+                return _customerMod;
+            }
+        }
     }
 }
