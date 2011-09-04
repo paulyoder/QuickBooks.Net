@@ -41,9 +41,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NPOI\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\log4net\log4net.dll</HintPath>
+    <Reference Include="Interop.QBXMLRP2Lib">
+      <HintPath>..\..\..\QBXML\Interop.QBXMLRP2Lib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -171,16 +174,6 @@
     <Compile Include="Utilities\ElementPosition.cs" />
     <Compile Include="Utilities\QBXMLBase.cs" />
     <Compile Include="Utilities\XElementBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="QBXMLRP2Lib">
-      <Guid>{4351618F-9059-4A79-B638-DCB8B97B3262}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
