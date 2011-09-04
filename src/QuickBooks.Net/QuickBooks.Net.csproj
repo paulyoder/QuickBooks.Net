@@ -41,9 +41,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NPOI\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.QBXMLRP2Lib">
-      <HintPath>..\..\..\QBXML\Interop.QBXMLRP2Lib.dll</HintPath>
+    <Reference Include="Interop.QBXMLRP2Lib, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\lib\QBXML\Interop.QBXMLRP2Lib.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\..\log4net\log4net.dll</HintPath>
